@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///Users/santiago/Downloads/surecontrol_5.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SureControl</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap');
+:root{--bg:#0a0a0a;--surface:#111111;--surface2:#1a1a1a;--border:#2a2a2a;--accent:#c8f135;--accent2:#f1c835;--text:#f0f0f0;--muted:#666;--danger:#ff4444}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow Condensed',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+#setup-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.setup-box{width:100%;max-width:520px;background:var(--surface);border:1px solid var(--border);padding:3rem}
+.logo{font-size:2.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:.25rem}
+.logo span{color:var(--accent)}
+.setup-subtitle{color:var(--muted);font-family:'Space Mono',monospace;font-size:.75rem;margin-bottom:2.5rem}
+.setup-label{display:block;font-size:.7rem;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:.5rem}
+.setup-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.85rem 1rem;font-family:'Space Mono',monospace;font-size:.8rem;margin-bottom:1.5rem;outline:none;transition:border-color .2s}
+.setup-input:focus{border-color:var(--accent)}
+.setup-hint{font-size:.7rem;color:var(--muted);font-family:'Space Mono',monospace;margin-top:-1.2rem;margin-bottom:1.5rem}
+.btn-primary{width:100%;background:var(--accent);color:#000;border:none;padding:1rem;font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:#d9ff3d}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+#app-screen{display:none;min-height:100vh}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
+.top-logo{font-size:1.5rem;font-weight:800;letter-spacing:-.5px}
+.top-logo span{color:var(--accent)}
+.top-nav{display:flex;gap:.5rem}
+.nav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.5rem 1.2rem;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.nav-btn:hover,.nav-btn.active{border-color:var(--accent);color:var(--accent)}
+.content{padding:2rem;max-width:960px;margin:0 auto}
+.section-title{font-size:.7rem;font-weight:700;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:1.5rem}
+.currency-bar{display:flex;gap:1rem;align-items:center;background:var(--surface);border:1px solid var(--border);padding:.75rem 1.25rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.currency-label{font-size:.65rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.currency-group{display:flex;align-items:center;gap:.5rem}
+.currency-tag{font-size:.7rem;font-weight:700;color:var(--accent2);font-family:'Space Mono',monospace;min-width:28px}
+.currency-input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.4rem .6rem;font-family:'Space Mono',monospace;font-size:.8rem;width:80px;outline:none;transition:border-color .2s}
+.currency-input:focus{border-color:var(--accent)}
+.upload-area{border:2px dashed var(--border);background:var(--surface);padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-bottom:1.5rem}
+.upload-area:hover,.upload-area.dragover{border-color:var(--accent);background:#141414}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.upload-text{font-size:1.2rem;font-weight:600;margin-bottom:.5rem}
+.upload-sub{font-size:.8rem;color:var(--muted);font-family:'Space Mono',monospace}
+.tickets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.ticket-thumb{position:relative;background:var(--surface);border:1px solid var(--border);overflow:hidden;cursor:pointer}
+.ticket-thumb img{width:100%;height:120px;object-fit:contain;background:#0d0d0d;display:block;transition:opacity .15s}
+.ticket-thumb:hover img{opacity:.85}
+.ticket-badge{position:absolute;top:4px;left:4px;color:#000;font-size:.6rem;font-weight:700;padding:2px 7px;letter-spacing:1px;pointer-events:none}
+.ticket-remove{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.85);border:1px solid var(--border);color:var(--danger);width:22px;height:22px;cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center}
+.ticket-name{padding:.35rem .5rem;font-size:.6rem;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid var(--border)}
+.zoom-hint{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-size:.6rem;color:var(--accent);opacity:0;transition:opacity .15s;pointer-events:none;font-family:'Space Mono',monospace}
+.ticket-thumb:hover .zoom-hint{opacity:1}
+.img-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;padding:2rem}
+.img-modal.open{display:flex}
+.img-modal img{max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid var(--border)}
+.img-modal-close{position:fixed;top:1rem;right:1.5rem;background:none;border:none;color:var(--text);font-size:2rem;cursor:pointer;z-index:1001}
+.btn-process{width:100%;background:var(--accent);color:#000;border:none;padding:1.1rem;font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-bottom:1.5rem}
+.btn-process:hover{background:#d9ff3d}
+.btn-process:disabled{opacity:.4;cursor:not-allowed}
+.processing-bar{background:var(--surface);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;display:none}
+.processing-title{font-size:.7rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:1rem}
+.progress-track{background:var(--bg);height:3px;width:100%;margin-bottom:.75rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s ease}
+.processing-status{font-size:.8rem;color:var(--muted);font-family:'Space Mono',monospace}
+.results-section{display:none}
+.step-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}
+.step-num{background:var(--accent);color:#000;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0}
+.step-info h2{font-size:1.4rem;font-weight:700;letter-spacing:1px}
+.step-info p{font-size:.8rem;color:var(--muted);font-family:'Space Mono',monospace}
+.surebet-card{background:var(--surface);border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden;transition:border-color .2s}
+.surebet-card.confirmed{border-color:var(--accent)}
+.surebet-card.rejected{border-color:var(--danger);opacity:.5}
+.surebet-card-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border)}
+.surebet-index{font-size:.65rem;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.surebet-tag{font-family:'Space Mono',monospace;font-size:.7rem;padding:3px 10px;border:1px solid var(--accent);color:var(--accent)}
+.tickets-comparison{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.ticket-col{background:var(--surface);padding:1.25rem}
+.ticket-col-label{font-size:.6rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:.75rem}
+.ticket-img-preview{width:100%;height:180px;object-fit:contain;background:#0d0d0d;border:1px solid var(--border);margin-bottom:.75rem;cursor:pointer;transition:opacity .15s;display:block}
+.ticket-img-preview:hover{opacity:.85}
+.ticket-data-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+.ticket-data-key{font-size:.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.ticket-data-val{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--text);font-weight:700}
+.surebet-summary{padding:1rem 1.25rem;display:flex;align-items:center;gap:2rem;background:var(--surface2);border-top:1px solid var(--border);flex-wrap:wrap}
+.summary-item{text-align:center}
+.summary-val{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent)}
+.summary-key{font-size:.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.card-actions{padding:1rem 1.25rem;display:flex;gap:.75rem;border-top:1px solid var(--border)}
+.btn-confirm{flex:1;background:var(--accent);color:#000;border:none;padding:.7rem;font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-confirm:hover{background:#d9ff3d}
+.btn-reject{background:none;border:1px solid var(--border);color:var(--muted);padding:.7rem 1.2rem;font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-reject:hover{border-color:var(--danger);color:var(--danger)}
+.data-verify-card{background:var(--surface);border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden}
+.data-verify-header{padding:.85rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dv-title{font-size:1rem;font-weight:700}
+.data-verify-body{padding:1.25rem}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.field-full{grid-column:1/-1}
+.field-group{display:flex;flex-direction:column;gap:.4rem}
+.field-label{font-size:.65rem;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.field-input{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;font-family:'Space Mono',monospace;font-size:.8rem;outline:none;width:100%;transition:border-color .2s}
+.field-input:focus{border-color:var(--accent)}
+.field-select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;font-family:'Space Mono',monospace;font-size:.8rem;outline:none;width:100%}
+.field-select:focus{border-color:var(--accent)}
+.pierna-block{background:var(--bg);border:1px solid var(--border);padding:1rem;margin-bottom:1rem}
+.pierna-title{font-size:.65rem;letter-spacing:3px;color:var(--accent2);text-transform:uppercase;margin-bottom:.85rem;font-weight:700}
+.step2-img-wrap{width:100%;background:#0d0d0d;border:1px solid var(--border);margin-bottom:.85rem;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;max-height:220px}
+.step2-img-wrap img{width:100%;max-height:220px;object-fit:contain;display:block;transition:opacity .15s}
+.step2-img-wrap:hover img{opacity:.85}
+.profit-preview{background:var(--bg);border:1px solid var(--accent);padding:1rem 1.25rem;display:flex;gap:2rem;flex-wrap:wrap;margin-top:1rem}
+.profit-val{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent)}
+.profit-key{font-size:.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.pierna-calc{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem;line-height:1.5}
+.btn-save-all{width:100%;background:var(--accent);color:#000;border:none;padding:1.1rem;font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:1rem}
+.btn-save-all:hover{background:#d9ff3d}
+#history-panel{display:none}
+.history-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:2rem}
+.stat-box{background:var(--surface);padding:1.25rem;text-align:center}
+.stat-val{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--accent)}
+.stat-key{font-size:.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:.3rem}
+.history-controls{display:flex;gap:.75rem;margin-bottom:1.5rem;align-items:center}
+.history-search{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.7rem 1rem;font-family:'Space Mono',monospace;font-size:.8rem;outline:none}
+.history-search:focus{border-color:var(--accent)}
+.btn-export{background:none;border:1px solid var(--border);color:var(--muted);padding:.7rem 1.2rem;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.btn-export:hover{border-color:var(--accent);color:var(--accent)}
+.history-table{width:100%;border-collapse:collapse}
+.history-table th{text-align:left;font-size:.6rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:.6rem 1rem;border-bottom:1px solid var(--border)}
+.history-table td{padding:.85rem 1rem;border-bottom:1px solid var(--border);font-size:.85rem;vertical-align:middle}
+.history-table tr:hover td{background:var(--surface2)}
+.casa-pill{background:var(--bg);border:1px solid var(--border);padding:2px 8px;font-size:.7rem;font-family:'Space Mono',monospace;display:inline-block;margin:1px}
+.profit-positive{color:var(--accent);font-family:'Space Mono',monospace;font-weight:700}
+.margin-badge{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent2)}
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:1rem;display:block}
+.empty-text{font-size:1rem;font-family:'Space Mono',monospace}
+#settings-panel{display:none}
+.settings-box{background:var(--surface);border:1px solid var(--border);padding:2rem;max-width:500px}
+.settings-row{margin-bottom:1.5rem}
+.danger-zone{border:1px solid var(--danger);padding:1.5rem;margin-top:2rem}
+.danger-title{font-size:.65rem;letter-spacing:3px;color:var(--danger);text-transform:uppercase;margin-bottom:1rem}
+.btn-danger{background:none;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all .15s}
+.btn-danger:hover{background:var(--danger);color:#000}
+.api-key-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.85rem 1rem;font-family:'Space Mono',monospace;font-size:.8rem;outline:none;margin-bottom:1rem}
+.api-key-input:focus{border-color:var(--accent)}
+.btn-save-settings{background:var(--accent);color:#000;border:none;padding:.75rem 2rem;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:2px;cursor:pointer}
+.btn-save-settings:hover{background:#d9ff3d}
+.info-text{font-size:.75rem;color:var(--muted);font-family:'Space Mono',monospace;line-height:1.6;margin-top:.5rem}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#000;padding:1rem 1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:2px;transform:translateY(100px);opacity:0;transition:all .3s;z-index:2000}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger);color:#fff}
+</style>
+</head>
+<body>
+
+<div class="img-modal" id="img-modal" onclick="closeModal()">
+  <button class="img-modal-close" onclick="closeModal()">✕</button>
+  <img id="modal-img" src="file:///Users/santiago/Downloads/surecontrol_5.html" alt="ticket">
+</div>
+
+<div id="setup-screen" style="display: none;">
+  <div class="setup-box">
+    <div class="logo">Sure<span>Control</span></div>
+    <div class="setup-subtitle">// registro de surebets por ticket</div>
+    <label class="setup-label">JSONBin Master Key</label>
+    <input class="setup-input" id="setup-key" type="password" placeholder="$2a$10$...">
+    <div class="setup-hint">jsonbin.io → Account Settings → Master Key</div>
+    <label class="setup-label">JSONBin Bin ID</label>
+    <input class="setup-input" id="setup-bin" type="text" placeholder="64abc123def456...">
+    <div class="setup-hint">URL de tu bin: /b/esto-es-el-id</div>
+    <label class="setup-label">Anthropic API Key</label>
+    <input class="setup-input" id="setup-api" type="password" placeholder="sk-ant-...">
+    <div class="setup-hint">platform.anthropic.com → API Keys</div>
+    <button class="btn-primary" onclick="setupConnect()">CONECTAR →</button>
+  </div>
+</div>
+
+<div id="app-screen" style="display: block;">
+  <div class="top-bar">
+    <div class="top-logo">Sure<span>Control</span></div>
+    <div class="top-nav">
+      <button class="nav-btn active" id="nav-registro" onclick="showPanel(&#39;registro&#39;)">REGISTRO</button>
+      <button class="nav-btn" id="nav-history" onclick="showPanel(&#39;history&#39;)">HISTORIAL</button>
+      <button class="nav-btn" id="nav-settings" onclick="showPanel(&#39;settings&#39;)">CONFIG</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div id="registro-panel">
+      <div id="upload-section">
+        <div class="section-title">// TIPO DE CAMBIO (editable)</div>
+        <div class="currency-bar">
+          <span class="currency-label">Actualiza según el día →</span>
+          <div class="currency-group">
+            <span class="currency-tag">USD</span>
+            <input class="currency-input" id="fx-usd" type="number" step="0.01" value="3.70">
+            <span class="currency-label">S/.</span>
+          </div>
+          <div class="currency-group">
+            <span class="currency-tag">EUR</span>
+            <input class="currency-input" id="fx-eur" type="number" step="0.01" value="4.10">
+            <span class="currency-label">S/.</span>
+          </div>
+        </div>
+
+        <div class="section-title">// SUBIR TICKETS</div>
+        <div class="upload-area" id="drop-zone">
+          <input type="file" id="file-input" accept="image/*" multiple="" onchange="handleFiles(this.files)">
+          <span class="upload-icon">📷</span>
+          <div class="upload-text">Arrastra los tickets aquí</div>
+          <div class="upload-sub">o toca para seleccionar · múltiples archivos · ordenados por fecha de captura</div>
+        </div>
+        <div class="tickets-grid" id="tickets-grid"></div>
+        <div class="processing-bar" id="processing-bar">
+          <div class="processing-title">// PROCESANDO TICKETS</div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="processing-status" id="processing-status">Iniciando...</div>
+        </div>
+        <button class="btn-process" id="btn-process" disabled="" onclick="processTickets()">ANALIZAR TICKETS →</button>
+      </div>
+
+      <div class="results-section" id="step1-section">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-info">
+            <h2>VERIFICAR AGRUPACIÓN</h2>
+            <p>Toca las imágenes para verlas completas · Confirma o rechaza cada par</p>
+          </div>
+        </div>
+        <div id="step1-cards"></div>
+        <button class="btn-process" id="btn-to-step2" onclick="goToStep2()" style="display:none">VERIFICAR DATOS →</button>
+      </div>
+
+      <div class="results-section" id="step2-section">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-info">
+            <h2>VERIFICAR DATOS</h2>
+            <p>Escribe la casa · corrige lo que sea necesario · profit se calcula solo</p>
+          </div>
+        </div>
+        <div id="step2-cards"></div>
+        <button class="btn-save-all" onclick="saveAllBets()">GUARDAR TODO →</button>
+      </div>
+    </div>
+
+    <div id="history-panel">
+      <div class="section-title">// HISTORIAL DE OPERACIONES</div>
+      <div class="history-stats" id="history-stats"></div>
+      <div class="history-controls">
+        <input class="history-search" id="history-search" placeholder="Buscar evento, casa, mercado..." oninput="renderHistory()">
+        <button class="btn-export" onclick="exportCSV()">EXPORTAR CSV</button>
+      </div>
+      <table class="history-table">
+        <thead><tr><th>FECHA</th><th>EVENTO</th><th>MERCADO</th><th>CASAS</th><th>CAPITAL</th><th>PROFIT</th><th>MARGEN</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+      <div id="history-empty" class="empty-state" style="display:none">
+        <span class="empty-icon">📋</span><div class="empty-text">Sin operaciones registradas</div>
+      </div>
+    </div>
+
+    <div id="settings-panel">
+      <div class="section-title">// CONFIGURACIÓN</div>
+      <div class="settings-box">
+        <div class="settings-row">
+          <label class="setup-label">JSONBin Master Key</label>
+          <input class="api-key-input" id="cfg-key" type="password">
+        </div>
+        <div class="settings-row">
+          <label class="setup-label">JSONBin Bin ID</label>
+          <input class="api-key-input" id="cfg-bin" type="text">
+        </div>
+        <div class="settings-row">
+          <label class="setup-label">Anthropic API Key</label>
+          <input class="api-key-input" id="cfg-api" type="password">
+          <div class="info-text">Costo estimado: ~$0.004 por ticket · Se usa claude-sonnet-4-5</div>
+        </div>
+        <button class="btn-save-settings" onclick="saveSettings()">GUARDAR CAMBIOS</button>
+        <div class="danger-zone">
+          <div class="danger-title">// ZONA DE PELIGRO</div>
+          <button class="btn-danger" onclick="clearConfig()">BORRAR CONFIGURACIÓN LOCAL</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let config={key:'',bin:'',apiKey:''};
+let uploadedFiles=[];
+let processedGroups=[];
+let step2Data=[];
+let allBets=[];
+
+window.onload=()=>{
+  const s=localStorage.getItem('sc_config');
+  if(s){config=JSON.parse(s);if(config.key&&config.bin)loadAndStart();}
+};
+
+async function loadAndStart(){
+  try{const d=await jsonbinGet();allBets=Array.isArray(d)?d:[];showApp();}
+  catch(e){showToast('Error conectando a JSONBin',true);}
+}
+
+async function setupConnect(){
+  const key=document.getElementById('setup-key').value.trim();
+  const bin=document.getElementById('setup-bin').value.trim();
+  const apiKey=document.getElementById('setup-api').value.trim();
+  if(!key||!bin||!apiKey){showToast('Completa todos los campos',true);return;}
+  config={key,bin,apiKey};
+  try{
+    const d=await jsonbinGet();
+    allBets=Array.isArray(d)?d:[];
+    localStorage.setItem('sc_config',JSON.stringify(config));
+    showApp();
+  }catch(e){
+    console.error(e);
+    showToast('Error JSONBin: '+e.message,true);
+  }
+}
+
+function showApp(){
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+}
+
+function showPanel(name){
+  ['registro','history','settings'].forEach(p=>{
+    document.getElementById(p+'-panel').style.display=p===name?'block':'none';
+    document.getElementById('nav-'+p).classList.toggle('active',p===name);
+  });
+  if(name==='history')renderHistory();
+  if(name==='settings')loadSettingsForm();
+}
+
+function openModal(src){
+  document.getElementById('modal-img').src=src;
+  document.getElementById('img-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('img-modal').classList.remove('open');}
+
+function handleFiles(files){
+  const promises=Array.from(files).map(file=>new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      getExifDate(file).then(captureDate=>{
+        resolve({file,dataUrl:e.target.result,name:file.name,captureDate});
+      });
+    };
+    reader.readAsDataURL(file);
+  }));
+  Promise.all(promises).then(newFiles=>{
+    uploadedFiles=[...uploadedFiles,...newFiles];
+    uploadedFiles.sort((a,b)=>a.captureDate-b.captureDate);
+    renderThumbs();
+  });
+}
+
+async function getExifDate(file){
+  try{
+    const buf=await file.arrayBuffer();
+    const view=new DataView(buf);
+    if(view.getUint16(0)!==0xFFD8)throw new Error('not jpeg');
+    let offset=2;
+    while(offset<view.byteLength-4){
+      const marker=view.getUint16(offset);
+      const length=view.getUint16(offset+2);
+      if(marker===0xFFE1){
+        const hdr=String.fromCharCode(view.getUint8(offset+4),view.getUint8(offset+5),view.getUint8(offset+6),view.getUint8(offset+7));
+        if(hdr==='Exif'){
+          const seg=new Uint8Array(buf,offset+4,length-2);
+          const str=String.fromCharCode(...seg);
+          const m=str.match(/(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
+          if(m){const d=new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}`);if(!isNaN(d))return d.getTime();}
+        }
+      }
+      offset+=2+length;
+    }
+  }catch(e){}
+  return file.lastModified||Date.now();
+}
+
+const dz=document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
+
+function removeFile(idx){uploadedFiles.splice(idx,1);renderThumbs();}
+
+function renderThumbs(){
+  const grid=document.getElementById('tickets-grid');
+  const btn=document.getElementById('btn-process');
+  grid.innerHTML=uploadedFiles.map((f,i)=>{
+    const pairNum=Math.floor(i/2)+1;
+    const isFirst=i%2===0;
+    const bg=isFirst?'var(--accent)':'var(--accent2)';
+    return `<div class="ticket-thumb" onclick="openModal('${f.dataUrl}')">
+      <img src="${f.dataUrl}" alt="ticket ${i+1}">
+      <div class="ticket-badge" style="background:${bg}">SB${pairNum}·P${isFirst?1:2}</div>
+      <div class="zoom-hint">🔍 ver completo</div>
+      <button class="ticket-remove" onclick="event.stopPropagation();removeFile(${i})">✕</button>
+      <div class="ticket-name">${f.name}</div>
+    </div>`;
+  }).join('');
+  btn.disabled=uploadedFiles.length<2;
+}
+
+async function processTickets(){
+  if(uploadedFiles.length<2)return;
+  const bar=document.getElementById('processing-bar');
+  const fill=document.getElementById('progress-fill');
+  const status=document.getElementById('processing-status');
+  bar.style.display='block';
+  document.getElementById('btn-process').disabled=true;
+  processedGroups=[];
+  const ticketData=[];
+  for(let i=0;i<uploadedFiles.length;i++){
+    fill.style.width=Math.round((i/uploadedFiles.length)*80)+'%';
+    status.textContent=`Analizando ticket ${i+1} de ${uploadedFiles.length}...`;
+    try{
+      const d=await extractTicketData(uploadedFiles[i]);
+      ticketData.push({...d,fileIdx:i,dataUrl:uploadedFiles[i].dataUrl});
+    }catch(e){
+      console.error('ticket',i,e);
+      ticketData.push({fileIdx:i,dataUrl:uploadedFiles[i].dataUrl,error:true,stake:null,odd:null,retorno:null,evento:null,mercado:null,outcome:null,moneda:'PEN'});
+    }
+  }
+  fill.style.width='90%';
+  status.textContent='Agrupando por orden de captura...';
+  processedGroups=groupTickets(ticketData);
+  fill.style.width='100%';
+  status.textContent=`${processedGroups.length} surebet(s) detectada(s)`;
+  setTimeout(()=>{bar.style.display='none';renderStep1();},500);
+}
+
+async function extractTicketData(fileObj){
+  const base64=fileObj.dataUrl.split(',')[1];
+  const mediaType=fileObj.file.type||'image/jpeg';
+  // Strip any non-ASCII characters from API key (copy-paste artifacts)
+  const safeKey=config.apiKey.replace(/[^\x20-\x7E]/g,'').trim();
+  const resp=await fetch('https://surecontrol.sllontop00.workers.dev',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':safeKey,
+      'anthropic-version':'2023-06-01',
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-5',
+      max_tokens:600,
+      messages:[{
+        role:'user',
+        content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:`Eres un extractor de datos de tickets de casas de apuestas deportivas. Analiza esta imagen y extrae los datos numéricos con máxima precisión.
+
+REGLAS DE EXTRACCIÓN:
+1. STAKE / APUESTA: dinero apostado en riesgo. Busca: "Apuesta", "Stake", "Monto", "Valor total", número ANTES de flecha →, o primer monto grande. NO es el retorno.
+2. ODD / CUOTA: multiplicador decimal entre 1.01 y 30. Busca: "Cuota", "Odd", "Precio", "Cuotas Total", número resaltado en verde/azul.
+3. RETORNO: monto total a cobrar si gana. Busca: "Retorno potencial", "Pago máximo", "Pago", "Ganar", número DESPUÉS de flecha →.
+4. EVENTO: nombres de equipos o jugadores.
+5. MERCADO: tipo de apuesta (Totales, Handicap, 1X2, Corners, Juegos, Rondas, etc).
+6. OUTCOME: resultado específico apostado (Over 2.5, Menos 4, -1.5, Local, Under 20.5, etc).
+7. MONEDA: PEN=soles S/., USD=dólares $, EUR=euros €.
+
+Responde SOLO con JSON puro, sin markdown, sin texto adicional:
+{"stake":número_o_null,"odd":número_o_null,"retorno":número_o_null,"evento":"string_o_null","mercado":"string_o_null","outcome":"string_o_null","moneda":"PEN"}`}
+        ]
+      }]
+    })
+  });
+  const result=await resp.json();
+  if(result.error)throw new Error(result.error.message);
+  const text=result.content[0].text.trim().replace(/```json|```/g,'').trim();
+  return JSON.parse(text);
+}
+
+function getFxRate(moneda){
+  const usd=parseFloat(document.getElementById('fx-usd').value)||3.70;
+  const eur=parseFloat(document.getElementById('fx-eur').value)||4.10;
+  if(moneda==='USD')return usd;
+  if(moneda==='EUR')return eur;
+  return 1;
+}
+
+function toSoles(amount,moneda){return(amount||0)*getFxRate(moneda);}
+
+function groupTickets(tickets){
+  const groups=[];
+  for(let i=0;i+1<tickets.length;i+=2){
+    const t1=tickets[i],t2=tickets[i+1];
+    const s1p=toSoles(t1.stake,t1.moneda);
+    const s2p=toSoles(t2.stake,t2.moneda);
+    const r1p=t1.retorno?toSoles(t1.retorno,t1.moneda):(t1.stake&&t1.odd?s1p*t1.odd:0);
+    const r2p=t2.retorno?toSoles(t2.retorno,t2.moneda):(t2.stake&&t2.odd?s2p*t2.odd:0);
+    const capital=s1p+s2p;
+    const minRet=Math.min(r1p,r2p);
+    const profit=capital>0?minRet-capital:null;
+    const margen=capital>0&&profit!==null?(profit/capital*100):null;
+    groups.push({t1,t2,capital,profit,margen,s1p,s2p,r1p,r2p,confirmed:false,rejected:false});
+  }
+  return groups;
+}
+
+function renderStep1(){
+  document.getElementById('upload-section').style.display='none';
+  document.getElementById('step1-section').style.display='block';
+  document.getElementById('step1-cards').innerHTML=processedGroups.map((g,idx)=>`
+    <div class="surebet-card" id="card1-${idx}">
+      <div class="surebet-card-header">
+        <div class="surebet-index">SUREBET #${idx+1}</div>
+        <div class="surebet-tag">ORDEN CAPTURA</div>
+      </div>
+      <div class="tickets-comparison">
+        <div class="ticket-col">
+          <div class="ticket-col-label">// PIERNA 1</div>
+          <img class="ticket-img-preview" src="${g.t1.dataUrl}" onclick="openModal('${g.t1.dataUrl}')">
+          ${g.t1.evento?`<div class="ticket-data-row"><span class="ticket-data-key">Evento</span><span class="ticket-data-val" style="font-size:.7rem">${g.t1.evento}</span></div>`:''}
+          ${g.t1.outcome?`<div class="ticket-data-row"><span class="ticket-data-key">Outcome</span><span class="ticket-data-val">${g.t1.outcome}</span></div>`:''}
+          <div class="ticket-data-row"><span class="ticket-data-key">Odd</span><span class="ticket-data-val">${g.t1.odd??'?'}</span></div>
+          <div class="ticket-data-row"><span class="ticket-data-key">Stake</span><span class="ticket-data-val">${g.t1.stake?(g.t1.moneda+' '+g.t1.stake):'?'}${g.t1.moneda!=='PEN'&&g.t1.stake?` <span style="color:var(--muted);font-size:.65rem">≈S/.${g.s1p.toFixed(2)}</span>`:''}</span></div>
+        </div>
+        <div class="ticket-col">
+          <div class="ticket-col-label">// PIERNA 2</div>
+          <img class="ticket-img-preview" src="${g.t2.dataUrl}" onclick="openModal('${g.t2.dataUrl}')">
+          ${g.t2.evento?`<div class="ticket-data-row"><span class="ticket-data-key">Evento</span><span class="ticket-data-val" style="font-size:.7rem">${g.t2.evento}</span></div>`:''}
+          ${g.t2.outcome?`<div class="ticket-data-row"><span class="ticket-data-key">Outcome</span><span class="ticket-data-val">${g.t2.outcome}</span></div>`:''}
+          <div class="ticket-data-row"><span class="ticket-data-key">Odd</span><span class="ticket-data-val">${g.t2.odd??'?'}</span></div>
+          <div class="ticket-data-row"><span class="ticket-data-key">Stake</span><span class="ticket-data-val">${g.t2.stake?(g.t2.moneda+' '+g.t2.stake):'?'}${g.t2.moneda!=='PEN'&&g.t2.stake?` <span style="color:var(--muted);font-size:.65rem">≈S/.${g.s2p.toFixed(2)}</span>`:''}</span></div>
+        </div>
+      </div>
+      <div class="surebet-summary">
+        <div class="summary-item"><div class="summary-val">S/.${g.capital.toFixed(2)}</div><div class="summary-key">Capital</div></div>
+        <div class="summary-item"><div class="summary-val">${g.profit!==null?'S/.'+g.profit.toFixed(2):'?'}</div><div class="summary-key">Profit est.</div></div>
+        <div class="summary-item"><div class="summary-val">${g.margen!==null?g.margen.toFixed(2)+'%':'?'}</div><div class="summary-key">Margen</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-confirm" id="btn-confirm-${idx}" onclick="confirmGroup(${idx})">✓ CONFIRMAR PAR</button>
+        <button class="btn-reject" onclick="rejectGroup(${idx})">✕ RECHAZAR</button>
+      </div>
+    </div>
+  `).join('');
+  checkStep1Complete();
+}
+
+function confirmGroup(idx){
+  processedGroups[idx].confirmed=true;processedGroups[idx].rejected=false;
+  document.getElementById('card1-'+idx).className='surebet-card confirmed';
+  document.getElementById('btn-confirm-'+idx).textContent='✓ CONFIRMADO';
+  checkStep1Complete();
+}
+function rejectGroup(idx){
+  processedGroups[idx].confirmed=false;processedGroups[idx].rejected=true;
+  document.getElementById('card1-'+idx).className='surebet-card rejected';
+  checkStep1Complete();
+}
+function checkStep1Complete(){
+  const decided=processedGroups.every(g=>g.confirmed||g.rejected);
+  const hasConfirmed=processedGroups.some(g=>g.confirmed);
+  document.getElementById('btn-to-step2').style.display=decided&&hasConfirmed?'block':'none';
+}
+
+function goToStep2(){
+  document.getElementById('step1-section').style.display='none';
+  document.getElementById('step2-section').style.display='block';
+  const confirmed=processedGroups.filter(g=>g.confirmed);
+  step2Data=confirmed.map(g=>({
+    evento:g.t1.evento||g.t2.evento||'',
+    deporte:'',
+    mercado:g.t1.mercado||g.t2.mercado||'',
+    casa1:'',outcome1:g.t1.outcome||'',odd1:g.t1.odd||'',stake1:g.t1.stake||'',moneda1:g.t1.moneda||'PEN',retorno1:g.t1.retorno||'',dataUrl1:g.t1.dataUrl,
+    casa2:'',outcome2:g.t2.outcome||'',odd2:g.t2.odd||'',stake2:g.t2.stake||'',moneda2:g.t2.moneda||'PEN',retorno2:g.t2.retorno||'',dataUrl2:g.t2.dataUrl,
+  }));
+  renderStep2Cards();
+}
+
+function renderStep2Cards(){
+  document.getElementById('step2-cards').innerHTML=step2Data.map((d,i)=>`
+    <div class="data-verify-card">
+      <div class="data-verify-header">
+        <div class="dv-title">SUREBET #${i+1}</div>
+        <div id="profit-tag-${i}" style="font-family:'Space Mono',monospace;font-size:.8rem;color:var(--accent)"></div>
+      </div>
+      <div class="data-verify-body">
+        <div class="field-row">
+          <div class="field-group field-full">
+            <label class="field-label">Evento</label>
+            <input class="field-input" value="${esc(d.evento)}" oninput="upd(${i},'evento',this.value)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Deporte</label>
+            <input class="field-input" value="${esc(d.deporte)}" placeholder="Fútbol / Basket / Tenis..." oninput="upd(${i},'deporte',this.value)">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Mercado</label>
+            <input class="field-input" value="${esc(d.mercado)}" oninput="upd(${i},'mercado',this.value)">
+          </div>
+        </div>
+
+        <div class="pierna-block">
+          <div class="pierna-title">// PIERNA 1</div>
+          <div class="step2-img-wrap" onclick="openModal('${d.dataUrl1}')"><img src="${d.dataUrl1}" alt="p1"></div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">★ Casa (escríbela tú)</label>
+              <input class="field-input" value="${esc(d.casa1)}" placeholder="Ej: Pinnacle" oninput="upd(${i},'casa1',this.value)" style="border-color:var(--accent2)">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Outcome</label>
+              <input class="field-input" value="${esc(d.outcome1)}" oninput="upd(${i},'outcome1',this.value)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Odd</label>
+              <input class="field-input" type="number" step="0.001" value="${d.odd1}" oninput="updN(${i},'odd1',this.value);calcProfit(${i})">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Stake</label>
+              <input class="field-input" type="number" step="0.01" value="${d.stake1}" oninput="updN(${i},'stake1',this.value);calcProfit(${i})">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Moneda</label>
+              <select class="field-select" onchange="upd(${i},'moneda1',this.value);calcProfit(${i})">
+                <option value="PEN" ${d.moneda1==='PEN'?'selected':''}>PEN (S/.)</option>
+                <option value="USD" ${d.moneda1==='USD'?'selected':''}>USD ($)</option>
+                <option value="EUR" ${d.moneda1==='EUR'?'selected':''}>EUR (€)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Retorno potencial</label>
+              <input class="field-input" type="number" step="0.01" value="${d.retorno1}" placeholder="auto si vacío" oninput="updN(${i},'retorno1',this.value);calcProfit(${i})">
+            </div>
+          </div>
+          <div class="pierna-calc" id="p1calc-${i}"></div>
+        </div>
+
+        <div class="pierna-block">
+          <div class="pierna-title">// PIERNA 2</div>
+          <div class="step2-img-wrap" onclick="openModal('${d.dataUrl2}')"><img src="${d.dataUrl2}" alt="p2"></div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">★ Casa (escríbela tú)</label>
+              <input class="field-input" value="${esc(d.casa2)}" placeholder="Ej: Betano" oninput="upd(${i},'casa2',this.value)" style="border-color:var(--accent2)">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Outcome</label>
+              <input class="field-input" value="${esc(d.outcome2)}" oninput="upd(${i},'outcome2',this.value)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Odd</label>
+              <input class="field-input" type="number" step="0.001" value="${d.odd2}" oninput="updN(${i},'odd2',this.value);calcProfit(${i})">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Stake</label>
+              <input class="field-input" type="number" step="0.01" value="${d.stake2}" oninput="updN(${i},'stake2',this.value);calcProfit(${i})">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Moneda</label>
+              <select class="field-select" onchange="upd(${i},'moneda2',this.value);calcProfit(${i})">
+                <option value="PEN" ${d.moneda2==='PEN'?'selected':''}>PEN (S/.)</option>
+                <option value="USD" ${d.moneda2==='USD'?'selected':''}>USD ($)</option>
+                <option value="EUR" ${d.moneda2==='EUR'?'selected':''}>EUR (€)</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Retorno potencial</label>
+              <input class="field-input" type="number" step="0.01" value="${d.retorno2}" placeholder="auto si vacío" oninput="updN(${i},'retorno2',this.value);calcProfit(${i})">
+            </div>
+          </div>
+          <div class="pierna-calc" id="p2calc-${i}"></div>
+        </div>
+
+        <div class="profit-preview">
+          <div><div class="profit-val" id="pp-cap-${i}">—</div><div class="profit-key">Capital total S/.</div></div>
+          <div><div class="profit-val" id="pp-r1-${i}">—</div><div class="profit-key">Retorno P1 S/.</div></div>
+          <div><div class="profit-val" id="pp-r2-${i}">—</div><div class="profit-key">Retorno P2 S/.</div></div>
+          <div><div class="profit-val" id="pp-prof-${i}">—</div><div class="profit-key">Profit garantizado</div></div>
+          <div><div class="profit-val" id="pp-mg-${i}">—</div><div class="profit-key">Margen</div></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  step2Data.forEach((_,i)=>calcProfit(i));
+}
+
+function esc(s){return(s||'').toString().replace(/"/g,'&quot;');}
+function upd(i,f,v){step2Data[i][f]=v;}
+function updN(i,f,v){step2Data[i][f]=v===''?'':parseFloat(v);}
+
+function calcProfit(i){
+  const d=step2Data[i];
+  const s1=parseFloat(d.stake1)||0,s2=parseFloat(d.stake2)||0;
+  const o1=parseFloat(d.odd1)||0,o2=parseFloat(d.odd2)||0;
+  const fx1=getFxRate(d.moneda1),fx2=getFxRate(d.moneda2);
+  const s1p=s1*fx1,s2p=s2*fx2;
+  const capital=s1p+s2p;
+  const r1raw=parseFloat(d.retorno1)||(s1&&o1?s1*o1:0);
+  const r2raw=parseFloat(d.retorno2)||(s2&&o2?s2*o2:0);
+  const r1p=r1raw*fx1,r2p=r2raw*fx2;
+  const minRet=Math.min(r1p,r2p);
+  const profit=capital>0?minRet-capital:0;
+  const margen=capital>0?(profit/capital*100):0;
+
+  const p1el=document.getElementById('p1calc-'+i);
+  const p2el=document.getElementById('p2calc-'+i);
+  if(p1el&&s1>0){
+    const conv=d.moneda1!=='PEN'?` · fx ${fx1} → S/.${s1p.toFixed(2)}`:'';
+    p1el.textContent=`Stake: ${d.moneda1} ${s1}${conv} · Retorno: S/.${r1p.toFixed(2)}`;
+  }
+  if(p2el&&s2>0){
+    const conv=d.moneda2!=='PEN'?` · fx ${fx2} → S/.${s2p.toFixed(2)}`:'';
+    p2el.textContent=`Stake: ${d.moneda2} ${s2}${conv} · Retorno: S/.${r2p.toFixed(2)}`;
+  }
+
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('pp-cap-'+i,capital>0?'S/.'+capital.toFixed(2):'—');
+  set('pp-r1-'+i,r1p>0?'S/.'+r1p.toFixed(2):'—');
+  set('pp-r2-'+i,r2p>0?'S/.'+r2p.toFixed(2):'—');
+  set('pp-prof-'+i,capital>0?'S/.'+profit.toFixed(2):'—');
+  set('pp-mg-'+i,capital>0?margen.toFixed(2)+'%':'—');
+
+  const tag=document.getElementById('profit-tag-'+i);
+  if(tag&&capital>0)tag.textContent=profit>=0?`+S/.${profit.toFixed(2)} (${margen.toFixed(2)}%)`:'⚠ negativo';
+}
+
+async function saveAllBets(){
+  const newBets=step2Data.map(d=>{
+    const s1=parseFloat(d.stake1)||0,s2=parseFloat(d.stake2)||0;
+    const o1=parseFloat(d.odd1)||0,o2=parseFloat(d.odd2)||0;
+    const fx1=getFxRate(d.moneda1),fx2=getFxRate(d.moneda2);
+    const s1p=s1*fx1,s2p=s2*fx2;
+    const r1raw=parseFloat(d.retorno1)||(s1&&o1?s1*o1:0);
+    const r2raw=parseFloat(d.retorno2)||(s2&&o2?s2*o2:0);
+    const r1p=r1raw*fx1,r2p=r2raw*fx2;
+    const capital=s1p+s2p;
+    const minRet=Math.min(r1p,r2p);
+    const profit=parseFloat((minRet-capital).toFixed(2));
+    const margen=capital>0?parseFloat((profit/capital*100).toFixed(2)):0;
+    return{
+      id:Date.now()+Math.random(),
+      fecha:new Date().toISOString(),
+      evento:d.evento,deporte:d.deporte,mercado:d.mercado,
+      capitalTotal:parseFloat(capital.toFixed(2)),
+      gananciaGarantizada:profit,margen,
+      retornos:[parseFloat(r1p.toFixed(2)),parseFloat(r2p.toFixed(2))],
+      minRet:parseFloat(minRet.toFixed(2)),
+      casas:[
+        {nombre:d.casa1,outcome:d.outcome1,odd:o1,stake:s1,moneda:d.moneda1,stake_pen:parseFloat(s1p.toFixed(2))},
+        {nombre:d.casa2,outcome:d.outcome2,odd:o2,stake:s2,moneda:d.moneda2,stake_pen:parseFloat(s2p.toFixed(2))}
+      ],
+      estado:'ok',fechaConfirm:new Date().toISOString()
+    };
+  });
+  allBets=[...newBets,...allBets];
+  try{
+    await jsonbinPut(allBets);
+    showToast(`✓ ${newBets.length} surebet(s) guardada(s)`);
+    resetRegistro();
+  }catch(e){showToast('Error guardando en JSONBin',true);}
+}
+
+function resetRegistro(){
+  uploadedFiles=[];processedGroups=[];step2Data=[];
+  document.getElementById('tickets-grid').innerHTML='';
+  document.getElementById('step1-cards').innerHTML='';
+  document.getElementById('step2-cards').innerHTML='';
+  document.getElementById('step1-section').style.display='none';
+  document.getElementById('step2-section').style.display='none';
+  document.getElementById('upload-section').style.display='block';
+  document.getElementById('btn-process').disabled=true;
+  document.getElementById('file-input').value='';
+}
+
+function renderHistory(){
+  const q=(document.getElementById('history-search').value||'').toLowerCase();
+  const filtered=allBets.filter(b=>!q||(b.evento||'').toLowerCase().includes(q)||(b.mercado||'').toLowerCase().includes(q)||(b.casas||[]).some(c=>(c.nombre||'').toLowerCase().includes(q)));
+  const total=allBets.length;
+  const totalCap=allBets.reduce((a,b)=>a+(b.capitalTotal||0),0);
+  const totalProfit=allBets.reduce((a,b)=>a+(b.gananciaGarantizada||0),0);
+  const avgM=total>0?allBets.reduce((a,b)=>a+(b.margen||0),0)/total:0;
+  document.getElementById('history-stats').innerHTML=`
+    <div class="stat-box"><div class="stat-val">${total}</div><div class="stat-key">Operaciones</div></div>
+    <div class="stat-box"><div class="stat-val">S/.${totalCap.toFixed(0)}</div><div class="stat-key">Capital Total</div></div>
+    <div class="stat-box"><div class="stat-val">S/.${totalProfit.toFixed(2)}</div><div class="stat-key">Profit Total</div></div>
+    <div class="stat-box"><div class="stat-val">${avgM.toFixed(2)}%</div><div class="stat-key">Margen Prom.</div></div>`;
+  const tbody=document.getElementById('history-body');
+  const empty=document.getElementById('history-empty');
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=filtered.map(b=>{
+    const fecha=new Date(b.fecha).toLocaleString('es-PE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const casas=(b.casas||[]).map(c=>`<span class="casa-pill">${c.nombre||'?'}</span>`).join('');
+    return`<tr>
+      <td style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted)">${fecha}</td>
+      <td style="font-weight:600">${b.evento||'—'}<br><span style="font-size:.7rem;color:var(--muted)">${b.deporte||''}</span></td>
+      <td style="color:var(--muted);font-size:.8rem">${b.mercado||'—'}</td>
+      <td>${casas}</td>
+      <td style="font-family:'Space Mono',monospace">S/.${(b.capitalTotal||0).toFixed(2)}</td>
+      <td class="profit-positive">S/.${(b.gananciaGarantizada||0).toFixed(2)}</td>
+      <td class="margin-badge">${(b.margen||0).toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function exportCSV(){
+  const h=['Fecha','Evento','Deporte','Mercado','Casa1','Outcome1','Odd1','Stake1','Moneda1','Stake1_PEN','Casa2','Outcome2','Odd2','Stake2','Moneda2','Stake2_PEN','Capital_PEN','Profit_PEN','Margen%'];
+  const rows=allBets.map(b=>{
+    const c=b.casas||[{},{}];
+    return[new Date(b.fecha).toLocaleString('es-PE'),b.evento,b.deporte,b.mercado,c[0].nombre,c[0].outcome,c[0].odd,c[0].stake,c[0].moneda,c[0].stake_pen,c[1].nombre,c[1].outcome,c[1].odd,c[1].stake,c[1].moneda,c[1].stake_pen,b.capitalTotal,b.gananciaGarantizada,b.margen].map(v=>`"${v??''}"`).join(',');
+  });
+  const blob=new Blob([[h.join(','),...rows].join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`surecontrol_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+function loadSettingsForm(){
+  document.getElementById('cfg-key').value=config.key;
+  document.getElementById('cfg-bin').value=config.bin;
+  document.getElementById('cfg-api').value=config.apiKey;
+}
+function saveSettings(){
+  config.key=document.getElementById('cfg-key').value.trim();
+  config.bin=document.getElementById('cfg-bin').value.trim();
+  config.apiKey=document.getElementById('cfg-api').value.trim();
+  localStorage.setItem('sc_config',JSON.stringify(config));
+  showToast('Configuración guardada');
+}
+function clearConfig(){
+  if(!confirm('¿Borrar configuración local?'))return;
+  localStorage.removeItem('sc_config');
+  location.reload();
+}
+
+async function jsonbinGet(){
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${config.bin}/latest`,{headers:{'X-Master-Key':config.key}});
+  if(!r.ok)throw new Error(`JSONBin ${r.status}: ${await r.text()}`);
+  return(await r.json()).record;
+}
+async function jsonbinPut(data){
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${config.bin}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':config.key},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(`JSONBin PUT ${r.status}`);
+}
+
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isError?' error':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+
+
+</body></html>
