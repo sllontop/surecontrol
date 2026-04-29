@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///Users/santiago/Downloads/surecontrol_7.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SureControl</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #080810;
+  --surface: #0f0f1a;
+  --surface2: #151525;
+  --surface3: #1a1a30;
+  --border: #1e1e35;
+  --border2: #2a2a45;
+  --accent: #00ff88;
+  --accent2: #00cc6a;
+  --accent3: #7affcc;
+  --gold: #ffd166;
+  --text: #e8eaf6;
+  --text2: #9395a5;
+  --muted: #4a4a6a;
+  --danger: #ff4d6d;
+  --danger2: #c9184a;
+  --info: #4cc9f0;
+  --purple: #7b2fff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* SETUP */
+#setup-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+  background:radial-gradient(ellipse at 50% 0%,#0d0d2e 0%,var(--bg) 70%);
+}
+.setup-box{
+  width:100%;
+  max-width:480px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  padding:3rem;
+  position:relative;
+  overflow:hidden;
+}
+.setup-box::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.logo{
+  font-size:2.5rem;
+  font-weight:900;
+  letter-spacing:-2px;
+  margin-bottom:.5rem;
+  line-height:1;
+}
+.logo-sure{color:var(--text)}
+.logo-control{color:var(--accent)}
+.setup-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  color:var(--muted);
+  margin-bottom:2.5rem;
+  letter-spacing:2px;
+}
+.field-label{
+  display:block;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:3px;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:.5rem;
+}
+.field-input{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:.75rem 1rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.8rem;
+  outline:none;
+  transition:border-color .2s;
+  margin-bottom:1.5rem;
+  border-radius:4px;
+}
+.field-input:focus{border-color:var(--accent)}
+.field-hint{
+  font-size:.65rem;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  margin-top:-1.2rem;
+  margin-bottom:1.5rem;
+}
+.btn-primary{
+  width:100%;
+  background:var(--accent);
+  color:#000;
+  border:none;
+  padding:1rem;
+  font-family:'Outfit',sans-serif;
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .2s;
+  border-radius:4px;
+}
+.btn-primary:hover{background:var(--accent3);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* APP */
+#app-screen{display:none;min-height:100vh}
+
+/* TOPBAR */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.85rem 2rem;
+  background:rgba(8,8,16,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:200;
+}
+.topbar-logo{
+  font-size:1.3rem;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+.topbar-logo .sure{color:var(--text)}
+.topbar-logo .control{color:var(--accent)}
+.topbar-nav{display:flex;gap:.4rem}
+.nav-btn{
+  background:none;
+  border:1px solid var(--border2);
+  color:var(--muted);
+  padding:.45rem 1.1rem;
+  font-family:'Outfit',sans-serif;
+  font-size:.8rem;
+  font-weight:600;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .2s;
+  border-radius:4px;
+}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,255,136,.06)}
+
+.content{padding:2rem;max-width:1000px;margin:0 auto}
+
+/* SECTION TITLE */
+.sec-title{
+  font-size:.6rem;
+  font-weight:700;
+  letter-spacing:4px;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:1.25rem;
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
+.sec-title::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border);
+}
+
+/* CURRENCY BAR */
+.currency-bar{
+  display:flex;
+  gap:1.5rem;
+  align-items:center;
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:.85rem 1.5rem;
+  margin-bottom:1.5rem;
+  border-radius:6px;
+  flex-wrap:wrap;
+}
+.currency-label{font-size:.65rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.currency-group{display:flex;align-items:center;gap:.5rem}
+.currency-tag{
+  font-size:.75rem;
+  font-weight:700;
+  color:var(--gold);
+  font-family:'JetBrains Mono',monospace;
+  min-width:32px;
+}
+.currency-input{
+  background:var(--bg);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:.4rem .7rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.8rem;
+  width:80px;
+  outline:none;
+  border-radius:3px;
+  transition:border-color .2s;
+}
+.currency-input:focus{border-color:var(--accent)}
+
+/* UPLOAD */
+.upload-area{
+  border:2px dashed var(--border2);
+  background:var(--surface);
+  padding:2.5rem 2rem;
+  text-align:center;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+  margin-bottom:1.5rem;
+  border-radius:8px;
+}
+.upload-area:hover,.upload-area.dragover{
+  border-color:var(--accent);
+  background:rgba(0,255,136,.03);
+}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload-icon{font-size:2rem;margin-bottom:.75rem;display:block}
+.upload-text{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+.upload-sub{font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* TICKET GRID */
+.tickets-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:.75rem;
+  margin-bottom:1.5rem;
+}
+.ticket-thumb{
+  position:relative;
+  background:var(--surface);
+  border:1px solid var(--border);
+  overflow:hidden;
+  cursor:pointer;
+  border-radius:6px;
+  transition:border-color .2s;
+}
+.ticket-thumb:hover{border-color:var(--border2)}
+.ticket-thumb img{
+  width:100%;
+  height:115px;
+  object-fit:contain;
+  background:#060608;
+  display:block;
+}
+.ticket-badge{
+  position:absolute;
+  top:5px;left:5px;
+  color:#000;
+  font-size:.58rem;
+  font-weight:800;
+  padding:2px 7px;
+  border-radius:3px;
+  pointer-events:none;
+  letter-spacing:.5px;
+}
+.ticket-remove{
+  position:absolute;
+  top:5px;right:5px;
+  background:rgba(0,0,0,.8);
+  border:1px solid var(--border2);
+  color:var(--danger);
+  width:20px;height:20px;
+  cursor:pointer;
+  font-size:.65rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:3px;
+}
+.ticket-name{
+  padding:.3rem .5rem;
+  font-size:.58rem;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  border-top:1px solid var(--border);
+}
+.zoom-hint{
+  position:absolute;
+  bottom:24px;left:0;right:0;
+  text-align:center;
+  font-size:.6rem;
+  color:var(--accent);
+  opacity:0;
+  transition:opacity .15s;
+  pointer-events:none;
+  font-family:'JetBrains Mono',monospace;
+  background:rgba(0,0,0,.6);
+  padding:2px 0;
+}
+.ticket-thumb:hover .zoom-hint{opacity:1}
+
+/* MODAL */
+.img-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.95);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+}
+.img-modal.open{display:flex}
+.img-modal img{
+  max-width:92vw;
+  max-height:92vh;
+  object-fit:contain;
+  border:1px solid var(--border2);
+  border-radius:4px;
+}
+.img-modal-close{
+  position:fixed;
+  top:1rem;right:1.5rem;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  color:var(--text);
+  font-size:1.2rem;
+  cursor:pointer;
+  z-index:1001;
+  width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+}
+
+/* BUTTONS */
+.btn-process{
+  width:100%;
+  background:var(--accent);
+  color:#000;
+  border:none;
+  padding:1rem;
+  font-family:'Outfit',sans-serif;
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .2s;
+  margin-bottom:1.5rem;
+  border-radius:6px;
+}
+.btn-process:hover{background:var(--accent3)}
+.btn-process:disabled{opacity:.4;cursor:not-allowed}
+
+/* PROCESSING */
+.processing-bar{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:1.5rem;
+  margin-bottom:1.5rem;
+  display:none;
+  border-radius:6px;
+}
+.proc-title{font-size:.6rem;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:1rem;font-weight:700}
+.progress-track{background:var(--bg);height:2px;width:100%;margin-bottom:.75rem;overflow:hidden;border-radius:1px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));width:0%;transition:width .4s ease}
+.proc-status{font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* STEP HEADER */
+.results-section{display:none}
+.step-header{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:1.5rem;
+  padding:1.25rem;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+.step-num{
+  background:var(--accent);
+  color:#000;
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1rem;
+  flex-shrink:0;
+  border-radius:50%;
+}
+.step-info h2{font-size:1.2rem;font-weight:800;letter-spacing:.5px}
+.step-info p{font-size:.75rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:.2rem}
+
+/* SUREBET CARD STEP 1 */
+.sb-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  transition:border-color .2s;
+  border-radius:8px;
+}
+.sb-card.confirmed{border-color:var(--accent)}
+.sb-card.rejected{border-color:var(--danger);opacity:.55}
+.sb-card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.85rem 1.25rem;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+}
+.sb-card-title{font-size:.65rem;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.sb-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;
+  padding:3px 10px;
+  border:1px solid var(--border2);
+  color:var(--muted);
+  border-radius:3px;
+}
+
+.tickets-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+}
+.ticket-col{background:var(--surface);padding:1.25rem}
+.ticket-col-label{
+  font-size:.58rem;
+  letter-spacing:3px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:.75rem;
+  font-weight:700;
+}
+.ticket-img-lg{
+  width:100%;
+  height:190px;
+  object-fit:contain;
+  background:#060608;
+  border:1px solid var(--border);
+  margin-bottom:.85rem;
+  cursor:pointer;
+  transition:opacity .15s;
+  display:block;
+  border-radius:4px;
+}
+.ticket-img-lg:hover{opacity:.85}
+.data-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+.data-key{font-size:.6rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.data-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text);font-weight:500}
+
+.sb-summary{
+  padding:1rem 1.25rem;
+  display:flex;
+  align-items:center;
+  gap:2rem;
+  background:var(--surface2);
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.sum-item{text-align:center}
+.sum-val{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:700;color:var(--accent)}
+.sum-key{font-size:.58rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+
+.card-actions{
+  padding:.85rem 1.25rem;
+  display:flex;
+  gap:.75rem;
+  border-top:1px solid var(--border);
+}
+.btn-confirm{
+  flex:1;background:var(--accent);color:#000;border:none;
+  padding:.65rem;
+  font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:800;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s;
+  border-radius:4px;
+}
+.btn-confirm:hover{background:var(--accent3)}
+.btn-reject{
+  background:none;border:1px solid var(--border2);color:var(--muted);
+  padding:.65rem 1.1rem;
+  font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:all .15s;border-radius:4px;
+}
+.btn-reject:hover{border-color:var(--danger);color:var(--danger)}
+
+/* MANUAL REGROUP */
+.regroup-panel{
+  background:var(--surface2);
+  border:1px solid var(--gold);
+  padding:1.25rem;
+  margin-bottom:1.25rem;
+  border-radius:8px;
+  display:none;
+}
+.regroup-title{
+  font-size:.6rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;
+  font-weight:700;margin-bottom:1rem;
+}
+.regroup-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:.5rem;
+  margin-bottom:1rem;
+}
+.regroup-thumb{
+  border:2px solid var(--border2);
+  border-radius:4px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:all .2s;
+  position:relative;
+}
+.regroup-thumb.selected{border-color:var(--accent)}
+.regroup-thumb.pair-a{border-color:var(--accent)}
+.regroup-thumb.pair-b{border-color:var(--gold)}
+.regroup-thumb img{width:100%;height:80px;object-fit:contain;background:#060608;display:block}
+.regroup-thumb-label{
+  font-size:.55rem;padding:2px 4px;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--muted);
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.regroup-badge{
+  position:absolute;top:3px;left:3px;
+  font-size:.55rem;font-weight:800;
+  padding:1px 5px;border-radius:2px;
+  color:#000;
+}
+.regroup-actions{display:flex;gap:.75rem}
+.btn-regroup{
+  background:var(--gold);color:#000;border:none;
+  padding:.6rem 1.2rem;
+  font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:800;
+  letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .15s;
+}
+.btn-regroup:hover{opacity:.85}
+.btn-regroup-cancel{
+  background:none;border:1px solid var(--border2);color:var(--muted);
+  padding:.6rem 1rem;
+  font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
+  cursor:pointer;border-radius:4px;transition:all .15s;
+}
+.btn-regroup-cancel:hover{border-color:var(--danger);color:var(--danger)}
+
+/* STEP 2 DATA CARDS */
+.dv-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:1.25rem;
+  overflow:hidden;
+  border-radius:8px;
+}
+.dv-header{
+  padding:.85rem 1.25rem;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dv-title{font-size:.95rem;font-weight:800}
+.dv-profit-tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent)}
+.dv-body{padding:1.25rem}
+
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.f-full{grid-column:1/-1}
+.f-group{display:flex;flex-direction:column;gap:.4rem}
+.f-label{font-size:.6rem;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.f-label.gold{color:var(--gold)}
+
+.f-input{
+  background:var(--bg);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:.6rem .85rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  outline:none;width:100%;
+  transition:border-color .2s;
+  border-radius:4px;
+}
+.f-input:focus{border-color:var(--accent)}
+.f-input.gold-border{border-color:rgba(255,209,102,.3)}
+.f-input.gold-border:focus{border-color:var(--gold)}
+
+.f-select{
+  background:var(--bg);
+  border:1px solid var(--border2);
+  color:var(--text);
+  padding:.6rem .85rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  outline:none;width:100%;
+  border-radius:4px;
+}
+.f-select:focus{border-color:var(--accent)}
+
+/* CASA AUTOCOMPLETE */
+.casa-wrap{position:relative}
+.casa-dropdown{
+  position:absolute;
+  top:100%;left:0;right:0;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-top:none;
+  z-index:100;
+  max-height:200px;
+  overflow-y:auto;
+  display:none;
+  border-radius:0 0 4px 4px;
+}
+.casa-dropdown.open{display:block}
+.casa-option{
+  padding:.5rem .85rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;
+  cursor:pointer;
+  color:var(--text2);
+  transition:background .1s;
+}
+.casa-option:hover,.casa-option.focused{background:var(--surface3);color:var(--accent)}
+
+.pierna-block{
+  background:var(--bg);
+  border:1px solid var(--border);
+  padding:1.1rem;
+  margin-bottom:1rem;
+  border-radius:6px;
+}
+.pierna-title{
+  font-size:.6rem;letter-spacing:3px;color:var(--gold);
+  text-transform:uppercase;margin-bottom:.85rem;font-weight:700;
+}
+
+.img-wrap{
+  width:100%;background:#060608;
+  border:1px solid var(--border);
+  margin-bottom:.85rem;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:pointer;
+  max-height:200px;border-radius:4px;
+}
+.img-wrap img{width:100%;max-height:200px;object-fit:contain;display:block;transition:opacity .15s}
+.img-wrap:hover img{opacity:.85}
+
+.pierna-calc{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;color:var(--muted);
+  margin-top:.5rem;line-height:1.6;
+}
+
+.profit-box{
+  background:linear-gradient(135deg,rgba(0,255,136,.05),rgba(0,255,136,.02));
+  border:1px solid rgba(0,255,136,.2);
+  padding:1.1rem 1.25rem;
+  display:flex;gap:2rem;flex-wrap:wrap;
+  margin-top:1rem;border-radius:6px;
+}
+.profit-item{}
+.profit-val{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--accent)}
+.profit-key{font-size:.58rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+
+.btn-save-all{
+  width:100%;background:var(--accent);color:#000;border:none;
+  padding:1rem;
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;margin-top:1rem;border-radius:6px;
+}
+.btn-save-all:hover{background:var(--accent3)}
+
+/* HISTORY */
+#history-panel{display:none}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);
+  margin-bottom:2rem;border-radius:8px;overflow:hidden;
+}
+.stat-box{background:var(--surface);padding:1.25rem;text-align:center}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--accent)}
+.stat-key{font-size:.58rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:.3rem}
+
+.history-controls{display:flex;gap:.75rem;margin-bottom:1.5rem;align-items:center}
+.history-search{
+  flex:1;background:var(--surface);border:1px solid var(--border2);
+  color:var(--text);padding:.7rem 1rem;
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;border-radius:4px;
+}
+.history-search:focus{border-color:var(--accent)}
+.btn-export{
+  background:none;border:1px solid var(--border2);color:var(--muted);
+  padding:.7rem 1.2rem;
+  font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  transition:all .15s;border-radius:4px;
+}
+.btn-export:hover{border-color:var(--accent);color:var(--accent)}
+
+.history-table{width:100%;border-collapse:collapse}
+.history-table th{
+  text-align:left;font-size:.58rem;letter-spacing:3px;
+  color:var(--muted);text-transform:uppercase;
+  padding:.65rem 1rem;border-bottom:1px solid var(--border);
+  font-weight:700;
+}
+.history-table td{
+  padding:.85rem 1rem;border-bottom:1px solid var(--border);
+  font-size:.82rem;vertical-align:middle;
+}
+.history-table tr:hover td{background:var(--surface2)}
+.casa-pill{
+  background:var(--surface2);border:1px solid var(--border2);
+  padding:2px 8px;font-size:.65rem;
+  font-family:'JetBrains Mono',monospace;
+  display:inline-block;margin:1px;border-radius:3px;
+}
+.profit-pos{color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:700}
+.margin-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--gold)}
+
+.btn-edit-row{
+  background:none;border:1px solid var(--border2);color:var(--muted);
+  padding:3px 8px;font-size:.65rem;cursor:pointer;border-radius:3px;
+  font-family:'Outfit',sans-serif;font-weight:600;transition:all .15s;
+}
+.btn-edit-row:hover{border-color:var(--info);color:var(--info)}
+
+/* EDIT MODAL */
+.edit-modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.85);z-index:500;
+  align-items:center;justify-content:center;padding:2rem;
+}
+.edit-modal.open{display:flex}
+.edit-box{
+  background:var(--surface);border:1px solid var(--border2);
+  padding:2rem;width:100%;max-width:600px;
+  border-radius:8px;max-height:90vh;overflow-y:auto;
+  position:relative;
+}
+.edit-box::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--info),transparent);
+}
+.edit-title{font-size:1rem;font-weight:800;margin-bottom:1.5rem;color:var(--info)}
+.edit-actions{display:flex;gap:.75rem;margin-top:1.5rem}
+.btn-save-edit{
+  flex:1;background:var(--accent);color:#000;border:none;
+  padding:.75rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;
+  letter-spacing:1px;cursor:pointer;border-radius:4px;
+}
+.btn-cancel-edit{
+  background:none;border:1px solid var(--border2);color:var(--muted);
+  padding:.75rem 1.2rem;font-family:'Outfit',sans-serif;font-size:.9rem;
+  cursor:pointer;border-radius:4px;
+}
+
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.empty-text{font-size:.9rem;font-family:'JetBrains Mono',monospace}
+
+/* SETTINGS */
+#settings-panel{display:none}
+.settings-box{
+  background:var(--surface);border:1px solid var(--border);
+  padding:2rem;max-width:500px;border-radius:8px;
+}
+.settings-row{margin-bottom:1.5rem}
+.danger-zone{border:1px solid var(--danger2);padding:1.5rem;margin-top:2rem;border-radius:6px}
+.danger-title{font-size:.6rem;letter-spacing:3px;color:var(--danger);text-transform:uppercase;margin-bottom:1rem;font-weight:700}
+.btn-danger{
+  background:none;border:1px solid var(--danger2);color:var(--danger);
+  padding:.7rem 1.5rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:700;
+  letter-spacing:1px;cursor:pointer;transition:all .15s;border-radius:4px;
+}
+.btn-danger:hover{background:var(--danger2);color:#fff}
+.btn-save-settings{
+  background:var(--accent);color:#000;border:none;
+  padding:.75rem 2rem;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;
+  letter-spacing:1px;cursor:pointer;border-radius:4px;
+}
+.btn-save-settings:hover{background:var(--accent3)}
+.info-text{font-size:.7rem;color:var(--muted);font-family:'JetBrains Mono',monospace;line-height:1.6;margin-top:.5rem}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:2rem;right:2rem;
+  background:var(--accent);color:#000;
+  padding:.85rem 1.5rem;
+  font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:800;
+  letter-spacing:1px;
+  transform:translateY(100px);opacity:0;transition:all .3s;z-index:2000;
+  border-radius:6px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger);color:#fff}
+.toast.info{background:var(--info);color:#000}
+</style>
+</head>
+<body>
+
+<!-- IMAGE MODAL -->
+<div class="img-modal" id="img-modal" onclick="closeModal()">
+  <button class="img-modal-close" onclick="closeModal()">✕</button>
+  <img id="modal-img" src="file:///Users/santiago/Downloads/surecontrol_7.html" alt="">
+</div>
+
+<!-- EDIT MODAL -->
+<div class="edit-modal" id="edit-modal">
+  <div class="edit-box">
+    <div class="edit-title">// EDITAR OPERACIÓN</div>
+    <div id="edit-form-body"></div>
+    <div class="edit-actions">
+      <button class="btn-save-edit" onclick="saveEdit()">GUARDAR</button>
+      <button class="btn-cancel-edit" onclick="closeEdit()">CANCELAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div class="logo"><span class="logo-sure">Sure</span><span class="logo-control">Control</span></div>
+    <div class="setup-tag">// REGISTRO DE SUREBETS POR TICKET</div>
+    <label class="field-label">JSONBin Master Key</label>
+    <input class="field-input" id="setup-key" type="password" placeholder="$2a$10$...">
+    <div class="field-hint">jsonbin.io → Account Settings → Master Key</div>
+    <label class="field-label">JSONBin Bin ID</label>
+    <input class="field-input" id="setup-bin" type="text" placeholder="64abc123def456...">
+    <div class="field-hint">URL de tu bin: /b/esto-es-el-id</div>
+    <label class="field-label">Anthropic API Key</label>
+    <input class="field-input" id="setup-api" type="password" placeholder="sk-ant-...">
+    <div class="field-hint">platform.anthropic.com → API Keys</div>
+    <button class="btn-primary" onclick="setupConnect()">CONECTAR →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <div class="topbar">
+    <div class="topbar-logo"><span class="sure">Sure</span><span class="control">Control</span></div>
+    <div class="topbar-nav">
+      <button class="nav-btn active" id="nav-registro" onclick="showPanel(&#39;registro&#39;)">REGISTRO</button>
+      <button class="nav-btn" id="nav-history" onclick="showPanel(&#39;history&#39;)">HISTORIAL</button>
+      <button class="nav-btn" id="nav-settings" onclick="showPanel(&#39;settings&#39;)">CONFIG</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- REGISTRO -->
+    <div id="registro-panel">
+      <div id="upload-section">
+        <div class="sec-title">TIPO DE CAMBIO</div>
+        <div class="currency-bar">
+          <span class="currency-label">Actualiza según el día</span>
+          <div class="currency-group">
+            <span class="currency-tag">USD</span>
+            <input class="currency-input" id="fx-usd" type="number" step="0.01" value="3.70">
+            <span class="currency-label">S/.</span>
+          </div>
+          <div class="currency-group">
+            <span class="currency-tag">EUR</span>
+            <input class="currency-input" id="fx-eur" type="number" step="0.01" value="4.10">
+            <span class="currency-label">S/.</span>
+          </div>
+        </div>
+
+        <div class="sec-title">SUBIR TICKETS</div>
+        <div class="upload-area" id="drop-zone">
+          <input type="file" id="file-input" accept="image/*" multiple="" onchange="handleFiles(this.files)">
+          <span class="upload-icon">📷</span>
+          <div class="upload-text">Arrastra los tickets aquí</div>
+          <div class="upload-sub">Orden de captura = orden de emparejamiento · Par consecutivo = surebet</div>
+        </div>
+        <div class="tickets-grid" id="tickets-grid"></div>
+        <div class="processing-bar" id="processing-bar">
+          <div class="proc-title">PROCESANDO TICKETS</div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="proc-status" id="proc-status">Iniciando...</div>
+        </div>
+        <button class="btn-process" id="btn-process" disabled="" onclick="processTickets()">ANALIZAR TICKETS →</button>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="results-section" id="step1-section">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-info">
+            <h2>VERIFICAR AGRUPACIÓN</h2>
+            <p>Toca imágenes para ampliar · Confirma o rechaza cada par · Rechazados pueden reagruparse</p>
+          </div>
+        </div>
+        <div id="regroup-panel" class="regroup-panel">
+          <div class="regroup-title">// REAGRUPAR TICKETS MANUALMENTE</div>
+          <div class="regroup-grid" id="regroup-grid"></div>
+          <div class="regroup-actions">
+            <button class="btn-regroup" onclick="applyRegroup()">CREAR PAR →</button>
+            <button class="btn-regroup-cancel" onclick="cancelRegroup()">CANCELAR</button>
+          </div>
+        </div>
+        <div id="step1-cards"></div>
+        <button class="btn-process" id="btn-to-step2" onclick="goToStep2()" style="display:none">VERIFICAR DATOS →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="results-section" id="step2-section">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-info">
+            <h2>VERIFICAR DATOS</h2>
+            <p>Escribe la casa · corrige datos extraídos · profit se calcula automáticamente</p>
+          </div>
+        </div>
+        <div id="step2-cards"></div>
+        <button class="btn-save-all" onclick="saveAllBets()">GUARDAR TODO →</button>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="history-panel">
+      <div class="sec-title">HISTORIAL DE OPERACIONES</div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="history-controls">
+        <input class="history-search" id="history-search" placeholder="Buscar evento, casa, mercado..." oninput="renderHistory()">
+        <button class="btn-export" onclick="exportCSV()">EXPORTAR CSV</button>
+      </div>
+      <table class="history-table">
+        <thead><tr>
+          <th>FECHA</th><th>EVENTO</th><th>MERCADO</th><th>CASAS</th>
+          <th>CAPITAL</th><th>PROFIT</th><th>MARGEN</th><th></th>
+        </tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+      <div id="history-empty" class="empty-state" style="display:none">
+        <span class="empty-icon">📋</span>
+        <div class="empty-text">Sin operaciones registradas</div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="settings-panel">
+      <div class="sec-title">CONFIGURACIÓN</div>
+      <div class="settings-box">
+        <div class="settings-row">
+          <label class="field-label">JSONBin Master Key</label>
+          <input class="field-input" id="cfg-key" type="password">
+        </div>
+        <div class="settings-row">
+          <label class="field-label">JSONBin Bin ID</label>
+          <input class="field-input" id="cfg-bin" type="text">
+        </div>
+        <div class="settings-row">
+          <label class="field-label">Anthropic API Key</label>
+          <input class="field-input" id="cfg-api" type="password">
+          <div class="info-text">~$0.004 por ticket · claude-sonnet-4-5 · Worker: surecontrol.sllontop00.workers.dev</div>
+        </div>
+        <button class="btn-save-settings" onclick="saveSettings()">GUARDAR CAMBIOS</button>
+        <div class="danger-zone">
+          <div class="danger-title">ZONA DE PELIGRO</div>
+          <button class="btn-danger" onclick="clearConfig()">BORRAR CONFIGURACIÓN LOCAL</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast error" id="toast">Error conectando a JSONBin</div>
+
+<script>
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+const CASAS = ['Bet365','Betsafe','Apuesta Total','Betano','MiCasino','Atlantic','Dorado','Apuesto.com','Meridianbet','Coolbet','Betcris','Olimpobet','Tinbet','20Bet','Sportmarket','Cloudbet','Roobet','Pinnacle','Rushbet','Inkabet','Betsson'];
+const WORKER_URL = 'https://surecontrol.sllontop00.workers.dev';
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let config={key:'',bin:'',apiKey:''};
+let uploadedFiles=[];
+let processedGroups=[];
+let rejectedTickets=[];
+let step2Data=[];
+let allBets=[];
+let editingId=null;
+let regroupSelected=[];
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.onload=()=>{
+  const s=localStorage.getItem('sc_config');
+  if(s){config=JSON.parse(s);if(config.key&&config.bin)loadAndStart();}
+};
+
+async function loadAndStart(){
+  try{const d=await jbGet();allBets=Array.isArray(d)?d:[];showApp();}
+  catch(e){showToast('Error conectando a JSONBin',true);}
+}
+
+async function setupConnect(){
+  const key=document.getElementById('setup-key').value.trim();
+  const bin=document.getElementById('setup-bin').value.trim();
+  const apiKey=document.getElementById('setup-api').value.trim();
+  if(!key||!bin||!apiKey){showToast('Completa todos los campos',true);return;}
+  config={key,bin,apiKey};
+  try{
+    const d=await jbGet();allBets=Array.isArray(d)?d:[];
+    localStorage.setItem('sc_config',JSON.stringify(config));
+    showApp();
+  }catch(e){showToast('Error JSONBin: '+e.message,true);}
+}
+
+function showApp(){
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+}
+
+// ─── PANELS ───────────────────────────────────────────────────────────────────
+function showPanel(name){
+  ['registro','history','settings'].forEach(p=>{
+    document.getElementById(p+'-panel').style.display=p===name?'block':'none';
+    document.getElementById('nav-'+p).classList.toggle('active',p===name);
+  });
+  if(name==='history')renderHistory();
+  if(name==='settings')loadSettingsForm();
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(src){document.getElementById('modal-img').src=src;document.getElementById('img-modal').classList.add('open');}
+function closeModal(){document.getElementById('img-modal').classList.remove('open');}
+
+// ─── FILES ────────────────────────────────────────────────────────────────────
+function handleFiles(files){
+  const promises=Array.from(files).map(file=>new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      getExifDate(file).then(captureDate=>{
+        resolve({file,dataUrl:e.target.result,name:file.name,captureDate});
+      });
+    };
+    reader.readAsDataURL(file);
+  }));
+  Promise.all(promises).then(newFiles=>{
+    uploadedFiles=[...uploadedFiles,...newFiles];
+    uploadedFiles.sort((a,b)=>a.captureDate-b.captureDate);
+    renderThumbs();
+  });
+}
+
+async function getExifDate(file){
+  try{
+    const buf=await file.arrayBuffer();
+    const view=new DataView(buf);
+    if(view.getUint16(0)!==0xFFD8)throw new Error('not jpeg');
+    let offset=2;
+    while(offset<view.byteLength-4){
+      const marker=view.getUint16(offset);
+      const length=view.getUint16(offset+2);
+      if(marker===0xFFE1){
+        const hdr=String.fromCharCode(view.getUint8(offset+4),view.getUint8(offset+5),view.getUint8(offset+6),view.getUint8(offset+7));
+        if(hdr==='Exif'){
+          const seg=new Uint8Array(buf,offset+4,length-2);
+          const str=String.fromCharCode(...seg);
+          const m=str.match(/(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
+          if(m){const d=new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}`);if(!isNaN(d))return d.getTime();}
+        }
+      }
+      offset+=2+length;
+    }
+  }catch(e){}
+  return file.lastModified||Date.now();
+}
+
+const dz=document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handleFiles(e.dataTransfer.files);});
+
+function removeFile(idx){uploadedFiles.splice(idx,1);renderThumbs();}
+
+function renderThumbs(){
+  const grid=document.getElementById('tickets-grid');
+  grid.innerHTML=uploadedFiles.map((f,i)=>{
+    const pairNum=Math.floor(i/2)+1;
+    const isFirst=i%2===0;
+    const bg=isFirst?'var(--accent)':'var(--gold)';
+    return `<div class="ticket-thumb" onclick="openModal('${f.dataUrl}')">
+      <img src="${f.dataUrl}" alt="">
+      <div class="ticket-badge" style="background:${bg}">SB${pairNum}·P${isFirst?1:2}</div>
+      <div class="zoom-hint">🔍 ampliar</div>
+      <button class="ticket-remove" onclick="event.stopPropagation();removeFile(${i})">✕</button>
+      <div class="ticket-name">${f.name}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('btn-process').disabled=uploadedFiles.length<2;
+}
+
+// ─── PROCESS ──────────────────────────────────────────────────────────────────
+async function processTickets(){
+  if(uploadedFiles.length<2)return;
+  const bar=document.getElementById('processing-bar');
+  const fill=document.getElementById('progress-fill');
+  const status=document.getElementById('proc-status');
+  bar.style.display='block';
+  document.getElementById('btn-process').disabled=true;
+  processedGroups=[];rejectedTickets=[];
+
+  const ticketData=[];
+  for(let i=0;i<uploadedFiles.length;i++){
+    fill.style.width=Math.round((i/uploadedFiles.length)*80)+'%';
+    status.textContent=`Analizando ticket ${i+1} de ${uploadedFiles.length}...`;
+    try{
+      const d=await extractTicketData(uploadedFiles[i]);
+      ticketData.push({...d,fileIdx:i,dataUrl:uploadedFiles[i].dataUrl,fileName:uploadedFiles[i].name});
+    }catch(e){
+      console.error('ticket',i,e);
+      ticketData.push({fileIdx:i,dataUrl:uploadedFiles[i].dataUrl,fileName:uploadedFiles[i].name,error:true,stake:null,odd:null,retorno:null,evento:null,mercado:null,outcome:null,deporte:null,moneda:'PEN'});
+    }
+  }
+
+  fill.style.width='90%';
+  status.textContent='Agrupando por orden de captura...';
+  processedGroups=groupTickets(ticketData);
+  fill.style.width='100%';
+  status.textContent=`${processedGroups.length} surebet(s) detectada(s)`;
+  setTimeout(()=>{bar.style.display='none';renderStep1();},500);
+}
+
+async function extractTicketData(fileObj){
+  const base64=fileObj.dataUrl.split(',')[1];
+  const mediaType=fileObj.file.type||'image/jpeg';
+  const safeKey=config.apiKey.replace(/[^\x20-\x7E]/g,'').trim();
+
+  const resp=await fetch(WORKER_URL,{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':safeKey,
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-5',
+      max_tokens:700,
+      messages:[{
+        role:'user',
+        content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:`Eres un extractor de datos de tickets de apuestas deportivas. Analiza con máxima precisión.
+
+EXTRAE:
+1. STAKE: dinero apostado en riesgo. Busca "Apuesta", "Stake", "Monto", número ANTES de flecha →. NO es el retorno.
+2. ODD: multiplicador decimal 1.01-30. Busca "Cuota", "Odd", "Precio", número resaltado.
+3. RETORNO: monto total a cobrar. Busca "Retorno potencial", "Pago máximo", "Pago", "Ganar", número DESPUÉS de →.
+4. EVENTO: nombres de equipos o jugadores.
+5. MERCADO: tipo (Totales, Handicap, 1X2, Corners, Juegos, Rondas, etc).
+6. OUTCOME: resultado específico (Over 2.5, Menos 4, -1.5, Local, Under 20.5, etc).
+7. MONEDA: PEN=soles S/., USD=$, EUR=€.
+8. DEPORTE: detecta por contexto (Fútbol, Basket, Tenis, Esports, Hockey, etc). Si no puedes determinar con certeza usa null.
+
+Responde SOLO JSON puro:
+{"stake":null,"odd":null,"retorno":null,"evento":null,"mercado":null,"outcome":null,"moneda":"PEN","deporte":null}`}
+        ]
+      }]
+    })
+  });
+
+  const result=await resp.json();
+  if(result.error)throw new Error(result.error.message);
+  const text=result.content[0].text.trim().replace(/```json|```/g,'').trim();
+  return JSON.parse(text);
+}
+
+// ─── FX ───────────────────────────────────────────────────────────────────────
+function getFx(m){
+  const usd=parseFloat(document.getElementById('fx-usd').value)||3.70;
+  const eur=parseFloat(document.getElementById('fx-eur').value)||4.10;
+  if(m==='USD')return usd;if(m==='EUR')return eur;return 1;
+}
+function toS(v,m){return(v||0)*getFx(m);}
+
+// ─── GROUPING ─────────────────────────────────────────────────────────────────
+function groupTickets(tickets){
+  const groups=[];
+  for(let i=0;i+1<tickets.length;i+=2){
+    const t1=tickets[i],t2=tickets[i+1];
+    groups.push(makeGroup(t1,t2));
+  }
+  return groups;
+}
+
+function makeGroup(t1,t2){
+  const s1p=toS(t1.stake,t1.moneda),s2p=toS(t2.stake,t2.moneda);
+  const r1p=t1.retorno?toS(t1.retorno,t1.moneda):(t1.stake&&t1.odd?s1p*t1.odd:0);
+  const r2p=t2.retorno?toS(t2.retorno,t2.moneda):(t2.stake&&t2.odd?s2p*t2.odd:0);
+  const capital=s1p+s2p;
+  const minRet=Math.min(r1p,r2p);
+  const profit=capital>0?minRet-capital:null;
+  const margen=capital>0&&profit!==null?(profit/capital*100):null;
+  return{t1,t2,capital,profit,margen,s1p,s2p,r1p,r2p,confirmed:false,rejected:false};
+}
+
+// ─── STEP 1 ───────────────────────────────────────────────────────────────────
+function renderStep1(){
+  document.getElementById('upload-section').style.display='none';
+  document.getElementById('step1-section').style.display='block';
+  renderStep1Cards();
+}
+
+function renderStep1Cards(){
+  document.getElementById('step1-cards').innerHTML=processedGroups.map((g,idx)=>`
+    <div class="sb-card ${g.confirmed?'confirmed':g.rejected?'rejected':''}" id="card1-${idx}">
+      <div class="sb-card-header">
+        <div class="sb-card-title">SUREBET #${idx+1}</div>
+        <div class="sb-tag">${g.confirmed?'✓ CONFIRMADO':g.rejected?'✕ RECHAZADO':'PENDIENTE'}</div>
+      </div>
+      <div class="tickets-split">
+        <div class="ticket-col">
+          <div class="ticket-col-label">// PIERNA 1</div>
+          <img class="ticket-img-lg" src="${g.t1.dataUrl}" onclick="openModal('${g.t1.dataUrl}')">
+          ${g.t1.evento?`<div class="data-row"><span class="data-key">Evento</span><span class="data-val" style="font-size:.7rem">${g.t1.evento}</span></div>`:''}
+          ${g.t1.deporte?`<div class="data-row"><span class="data-key">Deporte</span><span class="data-val">${g.t1.deporte}</span></div>`:''}
+          ${g.t1.outcome?`<div class="data-row"><span class="data-key">Outcome</span><span class="data-val">${g.t1.outcome}</span></div>`:''}
+          <div class="data-row"><span class="data-key">Odd</span><span class="data-val">${g.t1.odd??'?'}</span></div>
+          <div class="data-row"><span class="data-key">Stake</span><span class="data-val">${g.t1.stake?(g.t1.moneda+' '+g.t1.stake+(g.t1.moneda!=='PEN'?` ≈S/.${g.s1p.toFixed(0)}`:'')):'?'}</span></div>
+        </div>
+        <div class="ticket-col">
+          <div class="ticket-col-label">// PIERNA 2</div>
+          <img class="ticket-img-lg" src="${g.t2.dataUrl}" onclick="openModal('${g.t2.dataUrl}')">
+          ${g.t2.evento?`<div class="data-row"><span class="data-key">Evento</span><span class="data-val" style="font-size:.7rem">${g.t2.evento}</span></div>`:''}
+          ${g.t2.deporte?`<div class="data-row"><span class="data-key">Deporte</span><span class="data-val">${g.t2.deporte}</span></div>`:''}
+          ${g.t2.outcome?`<div class="data-row"><span class="data-key">Outcome</span><span class="data-val">${g.t2.outcome}</span></div>`:''}
+          <div class="data-row"><span class="data-key">Odd</span><span class="data-val">${g.t2.odd??'?'}</span></div>
+          <div class="data-row"><span class="data-key">Stake</span><span class="data-val">${g.t2.stake?(g.t2.moneda+' '+g.t2.stake+(g.t2.moneda!=='PEN'?` ≈S/.${g.s2p.toFixed(0)}`:'')):'?'}</span></div>
+        </div>
+      </div>
+      <div class="sb-summary">
+        <div class="sum-item"><div class="sum-val">S/.${g.capital.toFixed(2)}</div><div class="sum-key">Capital</div></div>
+        <div class="sum-item"><div class="sum-val">${g.profit!==null?'S/.'+g.profit.toFixed(2):'?'}</div><div class="sum-key">Profit est.</div></div>
+        <div class="sum-item"><div class="sum-val">${g.margen!==null?g.margen.toFixed(2)+'%':'?'}</div><div class="sum-key">Margen</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-confirm" id="btn-confirm-${idx}" onclick="confirmGroup(${idx})">${g.confirmed?'✓ CONFIRMADO':'✓ CONFIRMAR PAR'}</button>
+        <button class="btn-reject" onclick="rejectGroup(${idx})">✕ RECHAZAR</button>
+      </div>
+    </div>
+  `).join('');
+  checkStep1Complete();
+}
+
+function confirmGroup(idx){
+  processedGroups[idx].confirmed=true;processedGroups[idx].rejected=false;
+  // Remove from rejected if was there
+  rejectedTickets=rejectedTickets.filter(t=>t!==processedGroups[idx].t1&&t!==processedGroups[idx].t2);
+  renderStep1Cards();
+}
+
+function rejectGroup(idx){
+  processedGroups[idx].confirmed=false;processedGroups[idx].rejected=true;
+  // Add tickets to rejected pool for regrouping
+  const g=processedGroups[idx];
+  if(!rejectedTickets.find(t=>t.fileIdx===g.t1.fileIdx))rejectedTickets.push(g.t1);
+  if(!rejectedTickets.find(t=>t.fileIdx===g.t2.fileIdx))rejectedTickets.push(g.t2);
+  renderStep1Cards();
+  showRegroupPanel();
+}
+
+function checkStep1Complete(){
+  const decided=processedGroups.every(g=>g.confirmed||g.rejected);
+  const hasConfirmed=processedGroups.some(g=>g.confirmed);
+  document.getElementById('btn-to-step2').style.display=decided&&hasConfirmed?'block':'none';
+}
+
+// ─── REGROUP ──────────────────────────────────────────────────────────────────
+function showRegroupPanel(){
+  if(rejectedTickets.length<2){document.getElementById('regroup-panel').style.display='none';return;}
+  document.getElementById('regroup-panel').style.display='block';
+  regroupSelected=[];
+  document.getElementById('regroup-grid').innerHTML=rejectedTickets.map((t,i)=>`
+    <div class="regroup-thumb" id="rg-${i}" onclick="toggleRegroup(${i},'${t.dataUrl}')">
+      <img src="${t.dataUrl}" alt="">
+      <div class="regroup-thumb-label">${t.fileName||'ticket'}</div>
+    </div>
+  `).join('');
+}
+
+function toggleRegroup(i,dataUrl){
+  const el=document.getElementById('rg-'+i);
+  const idx=regroupSelected.indexOf(i);
+  if(idx>-1){
+    regroupSelected.splice(idx,1);
+    el.classList.remove('pair-a','pair-b');
+  }else{
+    if(regroupSelected.length>=2){showToast('Solo selecciona 2 tickets',true);return;}
+    regroupSelected.push(i);
+    el.classList.add(regroupSelected.length===1?'pair-a':'pair-b');
+    const badge=document.createElement('div');
+    badge.className='regroup-badge';
+    badge.style.background=regroupSelected.length===1?'var(--accent)':'var(--gold)';
+    badge.textContent='P'+regroupSelected.length;
+    el.appendChild(badge);
+  }
+}
+
+function applyRegroup(){
+  if(regroupSelected.length!==2){showToast('Selecciona exactamente 2 tickets',true);return;}
+  const t1=rejectedTickets[regroupSelected[0]];
+  const t2=rejectedTickets[regroupSelected[1]];
+  const newGroup=makeGroup(t1,t2);
+  processedGroups.push(newGroup);
+  // Remove from rejected
+  rejectedTickets=rejectedTickets.filter((t,i)=>!regroupSelected.includes(i));
+  regroupSelected=[];
+  renderStep1Cards();
+  showRegroupPanel();
+  showToast('Par creado — confirma o rechaza abajo','info');
+}
+
+function cancelRegroup(){
+  document.getElementById('regroup-panel').style.display='none';
+  regroupSelected=[];
+}
+
+// ─── STEP 2 ───────────────────────────────────────────────────────────────────
+function goToStep2(){
+  document.getElementById('step1-section').style.display='none';
+  document.getElementById('step2-section').style.display='block';
+  const confirmed=processedGroups.filter(g=>g.confirmed);
+  step2Data=confirmed.map(g=>({
+    evento:g.t1.evento||g.t2.evento||'',
+    deporte:g.t1.deporte||g.t2.deporte||'',
+    mercado:g.t1.mercado||g.t2.mercado||'',
+    casa1:'',outcome1:g.t1.outcome||'',odd1:g.t1.odd||'',stake1:g.t1.stake||'',moneda1:g.t1.moneda||'PEN',retorno1:g.t1.retorno||'',dataUrl1:g.t1.dataUrl,
+    casa2:'',outcome2:g.t2.outcome||'',odd2:g.t2.odd||'',stake2:g.t2.stake||'',moneda2:g.t2.moneda||'PEN',retorno2:g.t2.retorno||'',dataUrl2:g.t2.dataUrl,
+  }));
+  renderStep2Cards();
+}
+
+function renderStep2Cards(){
+  document.getElementById('step2-cards').innerHTML=step2Data.map((d,i)=>buildStep2Card(d,i)).join('');
+  step2Data.forEach((_,i)=>calcProfit(i));
+}
+
+function buildStep2Card(d,i){
+  return `
+  <div class="dv-card">
+    <div class="dv-header">
+      <div class="dv-title">SUREBET #${i+1}</div>
+      <div class="dv-profit-tag" id="dv-tag-${i}"></div>
+    </div>
+    <div class="dv-body">
+      <div class="f-row">
+        <div class="f-group f-full">
+          <label class="f-label">Evento</label>
+          <input class="f-input" value="${esc(d.evento)}" oninput="upd(${i},'evento',this.value)">
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label">Deporte</label>
+          <input class="f-input" value="${esc(d.deporte)}" placeholder="Detectado automáticamente o escribe" oninput="upd(${i},'deporte',this.value)">
+        </div>
+        <div class="f-group">
+          <label class="f-label">Mercado</label>
+          <input class="f-input" value="${esc(d.mercado)}" oninput="upd(${i},'mercado',this.value)">
+        </div>
+      </div>
+
+      <div class="pierna-block">
+        <div class="pierna-title">// PIERNA 1</div>
+        <div class="img-wrap" onclick="openModal('${d.dataUrl1}')"><img src="${d.dataUrl1}" alt=""></div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label gold">★ Casa</label>
+            <div class="casa-wrap">
+              <input class="f-input gold-border" id="casa1-${i}" value="${esc(d.casa1)}" placeholder="Escríbela tú" autocomplete="off"
+                oninput="upd(${i},'casa1',this.value);showCasaDrop(${i},1,this.value)"
+                onkeydown="navCasa(event,${i},1)"
+                onblur="hideCasaDrop(${i},1)">
+              <div class="casa-dropdown" id="casadrop1-${i}"></div>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Outcome</label>
+            <input class="f-input" value="${esc(d.outcome1)}" oninput="upd(${i},'outcome1',this.value)">
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Odd</label>
+            <input class="f-input" type="number" step="0.001" value="${d.odd1}" oninput="updN(${i},'odd1',this.value);calcProfit(${i})">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Stake</label>
+            <input class="f-input" type="number" step="0.01" value="${d.stake1}" oninput="updN(${i},'stake1',this.value);calcProfit(${i})">
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Moneda</label>
+            <select class="f-select" onchange="upd(${i},'moneda1',this.value);calcProfit(${i})">
+              <option value="PEN" ${d.moneda1==='PEN'?'selected':''}>PEN (S/.)</option>
+              <option value="USD" ${d.moneda1==='USD'?'selected':''}>USD ($)</option>
+              <option value="EUR" ${d.moneda1==='EUR'?'selected':''}>EUR (€)</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Retorno potencial</label>
+            <input class="f-input" type="number" step="0.01" value="${d.retorno1}" placeholder="auto si vacío" oninput="updN(${i},'retorno1',this.value);calcProfit(${i})">
+          </div>
+        </div>
+        <div class="pierna-calc" id="p1calc-${i}"></div>
+      </div>
+
+      <div class="pierna-block">
+        <div class="pierna-title">// PIERNA 2</div>
+        <div class="img-wrap" onclick="openModal('${d.dataUrl2}')"><img src="${d.dataUrl2}" alt=""></div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label gold">★ Casa</label>
+            <div class="casa-wrap">
+              <input class="f-input gold-border" id="casa2-${i}" value="${esc(d.casa2)}" placeholder="Escríbela tú" autocomplete="off"
+                oninput="upd(${i},'casa2',this.value);showCasaDrop(${i},2,this.value)"
+                onkeydown="navCasa(event,${i},2)"
+                onblur="hideCasaDrop(${i},2)">
+              <div class="casa-dropdown" id="casadrop2-${i}"></div>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Outcome</label>
+            <input class="f-input" value="${esc(d.outcome2)}" oninput="upd(${i},'outcome2',this.value)">
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Odd</label>
+            <input class="f-input" type="number" step="0.001" value="${d.odd2}" oninput="updN(${i},'odd2',this.value);calcProfit(${i})">
+          </div>
+          <div class="f-group">
+            <label class="f-label">Stake</label>
+            <input class="f-input" type="number" step="0.01" value="${d.stake2}" oninput="updN(${i},'stake2',this.value);calcProfit(${i})">
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-group">
+            <label class="f-label">Moneda</label>
+            <select class="f-select" onchange="upd(${i},'moneda2',this.value);calcProfit(${i})">
+              <option value="PEN" ${d.moneda2==='PEN'?'selected':''}>PEN (S/.)</option>
+              <option value="USD" ${d.moneda2==='USD'?'selected':''}>USD ($)</option>
+              <option value="EUR" ${d.moneda2==='EUR'?'selected':''}>EUR (€)</option>
+            </select>
+          </div>
+          <div class="f-group">
+            <label class="f-label">Retorno potencial</label>
+            <input class="f-input" type="number" step="0.01" value="${d.retorno2}" placeholder="auto si vacío" oninput="updN(${i},'retorno2',this.value);calcProfit(${i})">
+          </div>
+        </div>
+        <div class="pierna-calc" id="p2calc-${i}"></div>
+      </div>
+
+      <div class="profit-box">
+        <div><div class="profit-val" id="pp-cap-${i}">—</div><div class="profit-key">Capital S/.</div></div>
+        <div><div class="profit-val" id="pp-r1-${i}">—</div><div class="profit-key">Retorno P1</div></div>
+        <div><div class="profit-val" id="pp-r2-${i}">—</div><div class="profit-key">Retorno P2</div></div>
+        <div><div class="profit-val" id="pp-prof-${i}">—</div><div class="profit-key">Profit garantizado</div></div>
+        <div><div class="profit-val" id="pp-mg-${i}">—</div><div class="profit-key">Margen</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── CASA AUTOCOMPLETE ────────────────────────────────────────────────────────
+let casaFocusIdx={};
+
+function showCasaDrop(i,p,val){
+  const drop=document.getElementById(`casadrop${p}-${i}`);
+  const filtered=val.length===0?CASAS:CASAS.filter(c=>c.toLowerCase().includes(val.toLowerCase()));
+  if(!filtered.length){drop.classList.remove('open');return;}
+  casaFocusIdx[`${i}-${p}`]=-1;
+  drop.innerHTML=filtered.map((c,idx)=>`<div class="casa-option" data-idx="${idx}" onmousedown="selectCasa(${i},${p},'${c}')">${c}</div>`).join('');
+  drop.classList.add('open');
+}
+
+function hideCasaDrop(i,p){
+  setTimeout(()=>{
+    const drop=document.getElementById(`casadrop${p}-${i}`);
+    if(drop)drop.classList.remove('open');
+  },150);
+}
+
+function selectCasa(i,p,val){
+  upd(i,`casa${p}`,val);
+  const inp=document.getElementById(`casa${p}-${i}`);
+  if(inp)inp.value=val;
+  const drop=document.getElementById(`casadrop${p}-${i}`);
+  if(drop)drop.classList.remove('open');
+}
+
+function navCasa(e,i,p){
+  const drop=document.getElementById(`casadrop${p}-${i}`);
+  if(!drop||!drop.classList.contains('open'))return;
+  const opts=drop.querySelectorAll('.casa-option');
+  const key=`${i}-${p}`;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    casaFocusIdx[key]=Math.min((casaFocusIdx[key]||0)+1,opts.length-1);
+    opts.forEach((o,idx)=>o.classList.toggle('focused',idx===casaFocusIdx[key]));
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    casaFocusIdx[key]=Math.max((casaFocusIdx[key]||0)-1,0);
+    opts.forEach((o,idx)=>o.classList.toggle('focused',idx===casaFocusIdx[key]));
+  }else if(e.key==='Enter'){
+    e.preventDefault();
+    if(casaFocusIdx[key]>=0&&opts[casaFocusIdx[key]]){
+      selectCasa(i,p,opts[casaFocusIdx[key]].textContent);
+    }
+  }else if(e.key==='Escape'){
+    drop.classList.remove('open');
+  }
+}
+
+// ─── FORM STATE ───────────────────────────────────────────────────────────────
+function esc(s){return(s||'').toString().replace(/"/g,'&quot;');}
+function upd(i,f,v){step2Data[i][f]=v;}
+function updN(i,f,v){step2Data[i][f]=v===''?'':parseFloat(v);}
+
+function calcProfit(i){
+  const d=step2Data[i];
+  const s1=parseFloat(d.stake1)||0,s2=parseFloat(d.stake2)||0;
+  const o1=parseFloat(d.odd1)||0,o2=parseFloat(d.odd2)||0;
+  const fx1=getFx(d.moneda1),fx2=getFx(d.moneda2);
+  const s1p=s1*fx1,s2p=s2*fx2;
+  const capital=s1p+s2p;
+  const r1raw=parseFloat(d.retorno1)||(s1&&o1?s1*o1:0);
+  const r2raw=parseFloat(d.retorno2)||(s2&&o2?s2*o2:0);
+  const r1p=r1raw*fx1,r2p=r2raw*fx2;
+  const minRet=Math.min(r1p,r2p);
+  const profit=capital>0?minRet-capital:0;
+  const margen=capital>0?(profit/capital*100):0;
+
+  const p1el=document.getElementById('p1calc-'+i);
+  const p2el=document.getElementById('p2calc-'+i);
+  if(p1el&&s1>0)p1el.textContent=`Stake: ${d.moneda1} ${s1}${d.moneda1!=='PEN'?` · fx${fx1} → S/.${s1p.toFixed(2)}`:''}  ·  Retorno: S/.${r1p.toFixed(2)}`;
+  if(p2el&&s2>0)p2el.textContent=`Stake: ${d.moneda2} ${s2}${d.moneda2!=='PEN'?` · fx${fx2} → S/.${s2p.toFixed(2)}`:''}  ·  Retorno: S/.${r2p.toFixed(2)}`;
+
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('pp-cap-'+i,capital>0?'S/.'+capital.toFixed(2):'—');
+  set('pp-r1-'+i,r1p>0?'S/.'+r1p.toFixed(2):'—');
+  set('pp-r2-'+i,r2p>0?'S/.'+r2p.toFixed(2):'—');
+  set('pp-prof-'+i,capital>0?'S/.'+profit.toFixed(2):'—');
+  set('pp-mg-'+i,capital>0?margen.toFixed(2)+'%':'—');
+  const tag=document.getElementById('dv-tag-'+i);
+  if(tag&&capital>0)tag.textContent=profit>=0?`+S/.${profit.toFixed(2)} (${margen.toFixed(2)}%)`:'⚠ negativo';
+}
+
+// ─── SAVE ─────────────────────────────────────────────────────────────────────
+async function saveAllBets(){
+  const newBets=step2Data.map(d=>{
+    const s1=parseFloat(d.stake1)||0,s2=parseFloat(d.stake2)||0;
+    const o1=parseFloat(d.odd1)||0,o2=parseFloat(d.odd2)||0;
+    const fx1=getFx(d.moneda1),fx2=getFx(d.moneda2);
+    const s1p=s1*fx1,s2p=s2*fx2;
+    const r1raw=parseFloat(d.retorno1)||(s1&&o1?s1*o1:0);
+    const r2raw=parseFloat(d.retorno2)||(s2&&o2?s2*o2:0);
+    const r1p=r1raw*fx1,r2p=r2raw*fx2;
+    const capital=s1p+s2p;
+    const minRet=Math.min(r1p,r2p);
+    const profit=parseFloat((minRet-capital).toFixed(2));
+    const margen=capital>0?parseFloat((profit/capital*100).toFixed(2)):0;
+    return{
+      id:Date.now()+Math.random(),
+      fecha:new Date().toISOString(),
+      evento:d.evento,deporte:d.deporte,mercado:d.mercado,
+      capitalTotal:parseFloat(capital.toFixed(2)),
+      gananciaGarantizada:profit,margen,
+      retornos:[parseFloat(r1p.toFixed(2)),parseFloat(r2p.toFixed(2))],
+      minRet:parseFloat(minRet.toFixed(2)),
+      casas:[
+        {nombre:d.casa1,outcome:d.outcome1,odd:o1,stake:s1,moneda:d.moneda1,stake_pen:parseFloat(s1p.toFixed(2))},
+        {nombre:d.casa2,outcome:d.outcome2,odd:o2,stake:s2,moneda:d.moneda2,stake_pen:parseFloat(s2p.toFixed(2))}
+      ],
+      estado:'ok',fechaConfirm:new Date().toISOString()
+    };
+  });
+  allBets=[...newBets,...allBets];
+  try{
+    await jbPut(allBets);
+    showToast(`✓ ${newBets.length} surebet(s) guardada(s)`);
+    resetRegistro();
+  }catch(e){showToast('Error guardando: '+e.message,true);}
+}
+
+function resetRegistro(){
+  uploadedFiles=[];processedGroups=[];rejectedTickets=[];step2Data=[];regroupSelected=[];
+  document.getElementById('tickets-grid').innerHTML='';
+  document.getElementById('step1-cards').innerHTML='';
+  document.getElementById('step2-cards').innerHTML='';
+  document.getElementById('step1-section').style.display='none';
+  document.getElementById('step2-section').style.display='none';
+  document.getElementById('regroup-panel').style.display='none';
+  document.getElementById('upload-section').style.display='block';
+  document.getElementById('btn-process').disabled=true;
+  document.getElementById('file-input').value='';
+}
+
+// ─── HISTORY ─────────────────────────────────────────────────────────────────
+function renderHistory(){
+  const q=(document.getElementById('history-search').value||'').toLowerCase();
+  const filtered=allBets.filter(b=>!q||(b.evento||'').toLowerCase().includes(q)||(b.mercado||'').toLowerCase().includes(q)||(b.casas||[]).some(c=>(c.nombre||'').toLowerCase().includes(q)));
+
+  const total=allBets.length;
+  const totalCap=allBets.reduce((a,b)=>a+(b.capitalTotal||0),0);
+  const totalProfit=allBets.reduce((a,b)=>a+(b.gananciaGarantizada||0),0);
+  const avgM=total>0?allBets.reduce((a,b)=>a+(b.margen||0),0)/total:0;
+
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-box"><div class="stat-val">${total}</div><div class="stat-key">Operaciones</div></div>
+    <div class="stat-box"><div class="stat-val">S/.${totalCap.toFixed(0)}</div><div class="stat-key">Capital Total</div></div>
+    <div class="stat-box"><div class="stat-val">S/.${totalProfit.toFixed(2)}</div><div class="stat-key">Profit Total</div></div>
+    <div class="stat-box"><div class="stat-val">${avgM.toFixed(2)}%</div><div class="stat-key">Margen Prom.</div></div>`;
+
+  const tbody=document.getElementById('history-body');
+  const empty=document.getElementById('history-empty');
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  tbody.innerHTML=filtered.map(b=>{
+    const fecha=new Date(b.fecha).toLocaleString('es-PE',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const casas=(b.casas||[]).map(c=>`<span class="casa-pill">${c.nombre||'?'}</span>`).join('');
+    return`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--muted)">${fecha}</td>
+      <td style="font-weight:600">${b.evento||'—'}<br><span style="font-size:.68rem;color:var(--muted)">${b.deporte||''}</span></td>
+      <td style="color:var(--text2);font-size:.78rem">${b.mercado||'—'}</td>
+      <td>${casas}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">S/.${(b.capitalTotal||0).toFixed(2)}</td>
+      <td class="profit-pos">S/.${(b.gananciaGarantizada||0).toFixed(2)}</td>
+      <td class="margin-val">${(b.margen||0).toFixed(2)}%</td>
+      <td><button class="btn-edit-row" onclick="openEdit('${b.id}')">editar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── EDIT ─────────────────────────────────────────────────────────────────────
+function openEdit(id){
+  const b=allBets.find(x=>String(x.id)===String(id));
+  if(!b)return;
+  editingId=id;
+  const c=b.casas||[{},{} ];
+  document.getElementById('edit-form-body').innerHTML=`
+    <div class="f-row"><div class="f-group f-full">
+      <label class="f-label">Evento</label>
+      <input class="f-input" id="e-evento" value="${esc(b.evento)}">
+    </div></div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Deporte</label><input class="f-input" id="e-deporte" value="${esc(b.deporte)}"></div>
+      <div class="f-group"><label class="f-label">Mercado</label><input class="f-input" id="e-mercado" value="${esc(b.mercado)}"></div>
+    </div>
+    <div style="font-size:.6rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin:.75rem 0 .5rem;font-weight:700">// PIERNA 1</div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Casa</label><input class="f-input" id="e-casa1" value="${esc(c[0].nombre)}"></div>
+      <div class="f-group"><label class="f-label">Outcome</label><input class="f-input" id="e-out1" value="${esc(c[0].outcome)}"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Odd</label><input class="f-input" type="number" step="0.001" id="e-odd1" value="${c[0].odd}"></div>
+      <div class="f-group"><label class="f-label">Stake</label><input class="f-input" type="number" step="0.01" id="e-stake1" value="${c[0].stake}"></div>
+    </div>
+    <div style="font-size:.6rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin:.75rem 0 .5rem;font-weight:700">// PIERNA 2</div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Casa</label><input class="f-input" id="e-casa2" value="${esc(c[1].nombre)}"></div>
+      <div class="f-group"><label class="f-label">Outcome</label><input class="f-input" id="e-out2" value="${esc(c[1].outcome)}"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Odd</label><input class="f-input" type="number" step="0.001" id="e-odd2" value="${c[1].odd}"></div>
+      <div class="f-group"><label class="f-label">Stake</label><input class="f-input" type="number" step="0.01" id="e-stake2" value="${c[1].stake}"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Profit S/.</label><input class="f-input" type="number" step="0.01" id="e-profit" value="${b.gananciaGarantizada}"></div>
+      <div class="f-group"><label class="f-label">Margen %</label><input class="f-input" type="number" step="0.01" id="e-margen" value="${b.margen}"></div>
+    </div>
+  `;
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+async function saveEdit(){
+  const idx=allBets.findIndex(x=>String(x.id)===String(editingId));
+  if(idx===-1)return;
+  const b=allBets[idx];
+  const c=b.casas||[{},{}];
+  b.evento=document.getElementById('e-evento').value;
+  b.deporte=document.getElementById('e-deporte').value;
+  b.mercado=document.getElementById('e-mercado').value;
+  c[0].nombre=document.getElementById('e-casa1').value;
+  c[0].outcome=document.getElementById('e-out1').value;
+  c[0].odd=parseFloat(document.getElementById('e-odd1').value)||c[0].odd;
+  c[0].stake=parseFloat(document.getElementById('e-stake1').value)||c[0].stake;
+  c[1].nombre=document.getElementById('e-casa2').value;
+  c[1].outcome=document.getElementById('e-out2').value;
+  c[1].odd=parseFloat(document.getElementById('e-odd2').value)||c[1].odd;
+  c[1].stake=parseFloat(document.getElementById('e-stake2').value)||c[1].stake;
+  b.gananciaGarantizada=parseFloat(document.getElementById('e-profit').value)||b.gananciaGarantizada;
+  b.margen=parseFloat(document.getElementById('e-margen').value)||b.margen;
+  b.casas=c;
+  allBets[idx]=b;
+  try{
+    await jbPut(allBets);
+    showToast('✓ Operación actualizada');
+    closeEdit();
+    renderHistory();
+  }catch(e){showToast('Error guardando',true);}
+}
+
+function closeEdit(){
+  document.getElementById('edit-modal').classList.remove('open');
+  editingId=null;
+}
+
+function exportCSV(){
+  const h=['Fecha','Evento','Deporte','Mercado','Casa1','Outcome1','Odd1','Stake1','Moneda1','StakePEN1','Casa2','Outcome2','Odd2','Stake2','Moneda2','StakePEN2','Capital_PEN','Profit_PEN','Margen%'];
+  const rows=allBets.map(b=>{
+    const c=b.casas||[{},{}];
+    return[new Date(b.fecha).toLocaleString('es-PE'),b.evento,b.deporte,b.mercado,
+      c[0].nombre,c[0].outcome,c[0].odd,c[0].stake,c[0].moneda,c[0].stake_pen,
+      c[1].nombre,c[1].outcome,c[1].odd,c[1].stake,c[1].moneda,c[1].stake_pen,
+      b.capitalTotal,b.gananciaGarantizada,b.margen
+    ].map(v=>`"${v??''}"`).join(',');
+  });
+  const blob=new Blob([[h.join(','),...rows].join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`surecontrol_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────────────────────────
+function loadSettingsForm(){
+  document.getElementById('cfg-key').value=config.key;
+  document.getElementById('cfg-bin').value=config.bin;
+  document.getElementById('cfg-api').value=config.apiKey;
+}
+function saveSettings(){
+  config.key=document.getElementById('cfg-key').value.trim();
+  config.bin=document.getElementById('cfg-bin').value.trim();
+  config.apiKey=document.getElementById('cfg-api').value.trim();
+  localStorage.setItem('sc_config',JSON.stringify(config));
+  showToast('Configuración guardada');
+}
+function clearConfig(){
+  if(!confirm('¿Borrar configuración local?'))return;
+  localStorage.removeItem('sc_config');location.reload();
+}
+
+// ─── JSONBIN ──────────────────────────────────────────────────────────────────
+async function jbGet(){
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${config.bin}/latest`,{headers:{'X-Master-Key':config.key}});
+  if(!r.ok)throw new Error(`JSONBin ${r.status}: ${await r.text()}`);
+  return(await r.json()).record;
+}
+async function jbPut(data){
+  const r=await fetch(`https://api.jsonbin.io/v3/b/${config.bin}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json','X-Master-Key':config.key},
+    body:JSON.stringify(data)
+  });
+  if(!r.ok)throw new Error(`JSONBin PUT ${r.status}`);
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg,isError=false,isInfo=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast'+(isError?' error':isInfo?' info':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+
+
+</body></html>
